@@ -1,6 +1,17 @@
+// Contributor(s): Esa Mäkipää
+//
+// Esa Mäkipää: 
+// Basic code for promises (promise represents the eventual completion or 
+// failure of an asynchronous operation). I have used learnings from 
+// Full stak open 2020 course by University of Helsinki
+//
+// Description: Promises for getting book data and saving book and/or review data.
+// Axios library is used for communication between browser and server
+
 import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/api/books'
+const myBaseUrl = 'http://localhost:3001/api/myBooks'
 //const baseUrl = `https://www.googleapis.com/books/v1/volumes`
 //?q=${props.newFilter}t&maxResults=20&projection=full
 /*
@@ -11,7 +22,7 @@ axios.get('https://www.google.com/search', {
 })
 */
 
-
+// Getting book data from Google Books API
 const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
@@ -23,6 +34,11 @@ const getAll = newFilter => {
   return request.then(response => response.data.data.items)
 }
 
+// Saving book and/or review
+const create = newObject => {
+  const request = axios.post(myBaseUrl, newObject)
+  return request.then(response => response.data)
+}
 /*
 const getAll = newFilter => {
   //const request = axios.get(`https://www.googleapis.com/books/v1/volumes?q=${props.newFilter}t&maxResults=20&projection=full`)
@@ -46,4 +62,4 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 */
-export default { getAll /*, create, deleteSelected, update*/ }
+export default { getAll, create /*, create, deleteSelected, update*/ }
