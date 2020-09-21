@@ -22,7 +22,7 @@ axios.get('https://www.google.com/search', {
 })
 */
 
-// Getting book data from Google Books API
+// kirjojen haku Google Books APIsta
 const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
@@ -34,7 +34,7 @@ const getAll = newFilter => {
   return request.then(response => response.data.data.items)
 }
 
-// Saving book and/or review
+// kirjan ja/tairvostelujen tallentaminen
 const create = newObject => {
   const request = axios.post(myBaseUrl, newObject)
   return request.then(response => response.data)
