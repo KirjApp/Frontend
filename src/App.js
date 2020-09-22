@@ -306,53 +306,9 @@ const App = () => {
           </Typography>
         </div>
       </Grid>
-      
-      <Grid container spacing={0}>
-        <div>
-          <span>&nbsp;</span>
-          <Typography variant="h6" color="inherit">
-            Kirjoita arvostelu
-          </Typography>
-        </div>  
-      </Grid>    
 
-      <Grid container spacing={2}>  
-        <div>
-        <FormGroup>
-            <span>&nbsp;</span>
-            <TextField id="id" value={bookId} variant="outlined" size="small" onChange={handleBookIdChange} label="Kirjan id"/>
-            <span>&nbsp;</span>
-            <TextField id="writer" value={writer} variant="outlined" size="small" onChange={handleWriterChange} label="Nimimerkki"/>
-            <span>&nbsp;</span>
-          </FormGroup>
-        </div>
-        <div style={{width: "100%"}}>
-          <FormGroup>   
-            <TextField id="review" value={reviewText} variant="outlined" multiline size="small" rowsMax="4" fullWidth onChange={handleReviewChange} label="Kirjoita arvostelu"/>
-            <span>&nbsp;</span>
 
-            <div className={classes.rating}>
-              <Rating
-                name="hover-feedback"
-                value={stars}
-                precision={0.5}
-                onChange={(event, newValue) => {
-                  setStars(newValue);
-                }}
-                onChangeActive={(event, newHover) => {
-                  setHover(newHover);
-                }}
-              />
-              <div>
-                {stars !== null && <Box ml={2} p={0}>{labels[hover !== -1 ? hover : stars]}</Box>}
-              </div>
-            </div>
-          </FormGroup>
-          <div>
-            <Button variant="contained" id={"addButton"} onClick={addBook}> Lisää arvostelu</Button>
-          </div>
-        </div>  
-      </Grid>      
+            
     </Container>
     </Router>
   );
