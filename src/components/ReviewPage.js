@@ -53,7 +53,7 @@ const labels = {
 const useStyles = makeStyles((theme) => ({
   // kirjakortti (Paper Material-UI -komponentti)
   paper: {
-    height: 250,
+    height: 200,
     width: 120,
     backgroundColor: "#E5E5E5",
     padding: theme.spacing(2),
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ReviewPage = ( props ) => {
 
-  // kirjan id
+  // kirja id
   const id = useParams().id
   // nimimerkki
   const [ writer, setWriter ] = useState("");
@@ -109,7 +109,7 @@ const ReviewPage = ( props ) => {
     .getReviews(id)
     .then(returnedReviews => {
       setReviewsToShow(returnedReviews)
-    })
+    });
 
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
@@ -129,9 +129,9 @@ const ReviewPage = ( props ) => {
     // lisää kirjan ja arvostelun tiedot (book object)
     bookService
       .create(bookObject)
-    //.then(returnedBook => {
-      //setBooks(books.concat(returnedBook))
-    //})
+      .then(returnedBook => {
+        setReviewsToShow(returnedBook.reviews)
+      })
     //.catch(error => {
     //  console.log(error.response.data)   
     //})
@@ -153,18 +153,7 @@ const ReviewPage = ( props ) => {
   }
 
   return (
-    <Container maxWidth="sm">
-      
-      <div className={classes.appHeader}>
-        <AppBar position="static">
-          <Toolbar variant="dense">
-            <Typography variant="h6" color="inherit">
-              KirjApp
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </div>
-
+    <div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -173,13 +162,15 @@ const ReviewPage = ( props ) => {
                 <Paper className={classes.paper}>
                   <Img  
                     src={!("imageLinks" in filteredBook.volumeInfo) ?  `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
-                    alt="Book" width="100px" height="140px"
+                    alt="Book" width="120px" height="180px"
                   />
+                  </Paper>
+                <div>
                   <Book
                     title={filteredBook.volumeInfo.title}
                     authors={filteredBook.volumeInfo.authors}
                   />
-                </Paper>
+                </div>
 
                 <div>
                   {filteredBook.volumeInfo.description}                
@@ -230,7 +221,7 @@ const ReviewPage = ( props ) => {
             </div>
           </FormGroup>
           <div>
-            <Button variant="contained" id={"addButton"} onClick={addBook}> Lisää arvostelu</Button>
+          {(writer && reviewText && stars) ? <Button variant="contained" id={"addButton"} onClick={addBook}> Lähetä</Button> : <Button variant="contained" id={"addButton"} disabled onClick={addBook}> Lähetä</Button>}   
           </div>
         </div>
       </Grid>
@@ -249,15 +240,16 @@ const ReviewPage = ( props ) => {
           <Grid container spacing={2}>
             {reviewsToShow ? reviewsToShow.map((review) => (
               <div key={review._id}>
-                {review.reviewtext} {review.writer} {review.date} {review.stars}
-
+                <Box component="fieldset" mb={-3} borderColor="transparent">
+                  <Rating name="read-only" value={review.stars} precision={0.5} readOnly /> {review.date}
+                </Box>
+                <p>"{review.reviewtext}" - {review.writer}</p>
               </div>
-            )) : []}
+            )) : ["Teokselle ei löydy arvosteluja"]}
           </Grid>
         </Grid>
       </Grid>
-      
-    </Container>      
+    </div>      
   )
 }
 

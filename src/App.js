@@ -40,6 +40,12 @@ import Button from '@material-ui/core/Button';
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
 import Box from '@material-ui/core/Box';
 
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+//import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+
 // tähtien arvoa vastaavat sanalliset kuvaukset 
 const labels = {
   0.5: 'Hyödytön',
@@ -61,6 +67,20 @@ const useStyles = makeStyles((theme) => ({
     width: 120,
     backgroundColor: "#E5E5E5",
     padding: theme.spacing(2),
+  },
+  bookCard: {
+    height: 250,
+    width: 120,
+    // background color added
+    backgroundColor: "#E5E5E5",
+    // padding added
+    padding: theme.spacing(2),
+  },
+  media: {
+    height: 120,
+    width: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // syötekenttä hakusanalle
   filterTextField: {
@@ -219,98 +239,98 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">Etusivu</Link>
-        <Link style={padding} to="/reviews">Kirjanäkymä</Link>
-      </div>
-
-      <Switch>
-        <Route path="/reviews/:id">
-          <ReviewPage books={selectedBooks} />
-        </Route>
-        <Route path="/reviews/">
-          <ReviewPage books={selectedBooks} />
-        </Route>
-      </Switch>
-
-
-    <Container maxWidth="sm">
+    <div>
+      <Container maxWidth="sm">
+        <div className={classes.appHeader}>
+          <AppBar position="static">
+            <Toolbar variant="dense">
+              <Typography variant="h6" color="inherit">
+                KirjApp
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </div>
       
-      <div className={classes.appHeader}>
-        <AppBar position="static">
-          <Toolbar variant="dense">
-            <Typography variant="h6" color="inherit">
-              KirjApp
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </div>
-
-      <Grid container spacing={2}>
         <div>
-          <span>&nbsp;</span>
-            <form className={classes.filterTextField} noValidate autoComplete="off">
-              <TextField id="searchText" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
-            </form>
+          <Link style={padding} to="/">Etusivu</Link>  
         </div>
-      </Grid>
 
-      <Grid container spacing={0}>
-        <div>
-          <span>&nbsp;</span>
-            <Typography variant="subtitle1" color="inherit">
-            Hakutuloksia: {selectedBooks ? selectedBooks.length : 0} 
-            </Typography>
-        </div>
-      </Grid>
+        <Switch>
+          <Route path="/reviews/:id">
+            <ReviewPage books={selectedBooks} />
+          </Route>
+          <Route path="/reviews/">
+            <ReviewPage books={selectedBooks} />
+          </Route>
+          <Route path="/">
+            <div>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {selectedBooks ? selectedBooks.map((book) => (
-              <Grid key={book.id} item>
-                <div className={classes.button}>
-                  <ButtonBase>                   
-                    <Paper className={classes.paper}>
-                      
-                      <Img
-                        //src={[`${NoImage}`]}
-                        src={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
-                        //src={[`${book.volumeInfo.imageLinks.smallThumbnail}`, `${NoImage}`]}
-                        alt="Book" width="100px" height="140px"
-                      />
-
-                      <Link to={`/reviews/${book.id}`}>{book.volumeInfo.title}</Link>
-                      
-                      <Book
-                        //id={book.id}
-                        //title={book.volumeInfo.title} 
-                        authors={book.volumeInfo.authors}                       
-                      />
-                     
-                    </Paper>
-                  </ButtonBase>
+              <Grid container spacing={2}>
+                <div>
+                  <span>&nbsp;</span>
+                  <form className={classes.filterTextField} noValidate autoComplete="off">
+                    <TextField id="searchText" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
+                  </form>
                 </div>
               </Grid>
-            )) : []}
-          </Grid>
-        </Grid>
-      </Grid>
+
+              <Grid container spacing={0}>
+                <div>
+                  <span>&nbsp;</span>
+                  <Typography variant="subtitle1" color="inherit">
+                    Hakutuloksia: {selectedBooks ? selectedBooks.length : 0} 
+                  </Typography>
+                </div>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    {selectedBooks ? selectedBooks.map((book) => (
+                      <Grid key={book.id} item>
+                        <div className={classes.button}>
+                          <ButtonBase> 
+
+                            <CardActionArea component={Link} to={`/reviews/${book.id}`}> 
+                              <Card className={classes.bookCard}>
+                                <CardMedia
+                                  className={classes.media}
+                                  image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
+                                  alt="Book" width="80px" height="100px"                  
+                                />
+                                <CardContent>
+                                  <Typography gutterBottom variant="subtitle2" component="h2">
+                                    {book.volumeInfo.title}
+                                  </Typography>
+                                  <Typography variant="body2" color="textSecondary" component="p">
+                                    {book.volumeInfo.authors}
+                                  </Typography>
+                                </CardContent>
+                              </Card>
+                            </CardActionArea>
+
+                          </ButtonBase>
+                        </div>
+                     </Grid>
+                    )) : []}
+                  </Grid>
+                </Grid>
+              </Grid>
       
-      <Grid container spacing={0}>
-        <div>
-          <span>&nbsp;</span>
-          <Typography variant="h6" color="inherit">
-            Suosituimmat kirjat
-          </Typography>
-        </div>
-      </Grid>
+              <Grid container spacing={0}>
+                <div>
+                  <span>&nbsp;</span>
+                  <Typography variant="h6" color="inherit">
+                    Suosituimmat kirjat
+                  </Typography>
+                </div>
+              </Grid>
 
-
-            
-    </Container>
-    </Router>
+            </div>
+          </Route>
+        </Switch>
+      </Container>
+    </div>
   );
 };
 
