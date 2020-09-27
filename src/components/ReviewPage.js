@@ -12,17 +12,13 @@
 // write a review text and submit it 
 
 import React, { useState } from "react";
-import Book from "./Book";
+
 import NoImage from "../noImage.png";
 import bookService from "../services/data";
 //import NoImage from "../logo.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
 import TextField from '@material-ui/core/TextField';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
 // Router
@@ -35,6 +31,7 @@ import Button from '@material-ui/core/Button';
 // tähtien antaminen
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
 import Box from '@material-ui/core/Box';
+import Alert from '@material-ui/lab/Alert';
 
 // tähtien arvoa vastaavat sanalliset kuvaukset
 const labels = {
@@ -52,40 +49,29 @@ const labels = {
 
 const useStyles = makeStyles((theme) => ({
   // kirjakortti (Paper Material-UI -komponentti)
-  paper: {
-    height: 200,
-    width: 120,
-    backgroundColor: "#E5E5E5",
-    padding: theme.spacing(2),
-  },
-  // sovelluksen otsikko
-  appHeader: {
+  root: {
     flexGrow: 1,
-    width: "80ch"
-    //bacgroundCOlor: "#E5E5E5"
   },
-  // tekstikenttä nimimerkille
-  inputTextField: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-    backgroundColor: "#FFFFFF",
-  },
-  // tekstikenttä arvostelun kirjoittamiseen
-  reviewInputTextField: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: "80ch",
-    },
-    backgroundColor: "#FFFFFF",
-  },
-  // tähtikenttä
-  rating: {
+  inputRating: {
     width: 200,
+    height: 50,
     display: 'flex',
     alignItems: 'center',
-  },  
+  },
+  // tähtikenttä tähtien näyttämiseen
+  outputRating: {
+    width: 150,
+    height: 20,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  //lisätty 25.9.2020
+  message: {
+    width: '70%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
+  },
 }));
 
 const ReviewPage = ( props ) => {
@@ -101,6 +87,9 @@ const ReviewPage = ( props ) => {
   // arvostelu tähdillä
   const [stars, setStars] = React.useState(0);
   const [hover, setHover] = React.useState(-1);
+  // Viestit
+  const [ message, setMessage ] = useState(null)
+  const [ messageType, setMessageType ] = useState('')
 
   const classes = useStyles();
 
@@ -132,9 +121,13 @@ const ReviewPage = ( props ) => {
       .then(returnedBook => {
         setReviewsToShow(returnedBook.reviews)
       })
-    //.catch(error => {
-    //  console.log(error.response.data)   
-    //})
+      .catch(error => {
+        //console.log(error.response.data)
+        setMessage("Arvostelusi tallentamisessa tapahtui virhe")
+        setMessageType("error")   
+    })
+      setMessage("Arvostelusi on tallennettu")
+      setMessageType("success")
   }       
     
   // writer input
@@ -147,39 +140,57 @@ const ReviewPage = ( props ) => {
     setReviewText(event.target.value)
   }
     
-  // stars input
-  const handleStarsChange = (event) => {
-    setStars(event.target.value)
-  }
-
   return (
     <div>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {props.books.filter(book => book.id === id).map(filteredBook => (
-              <Grid key={filteredBook.id} item>
-                <Paper className={classes.paper}>
-                  <Img  
-                    src={!("imageLinks" in filteredBook.volumeInfo) ?  `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
-                    alt="Book" width="120px" height="180px"
-                  />
-                  </Paper>
-                <div>
-                  <Book
-                    title={filteredBook.volumeInfo.title}
-                    authors={filteredBook.volumeInfo.authors}
-                  />
-                </div>
-
-                <div>
-                  {filteredBook.volumeInfo.description}                
-                </div>
+      <br /> 
+      {props.books.filter(book => book.id === id).map(filteredBook => (
+        <Grid key={filteredBook.id} item>
+         <div className={classes.root}>
+            <Grid container spacing={1}>
+              <Grid container item xs={12} spacing={0} padding={0}>
+                <Grid item xs={6}>
+                  
+                    <Img  
+                      src={!("imageLinks" in filteredBook.volumeInfo) ?  `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
+                      alt="Book" width="170px" height="250px"
+                    /> 
+                    
+                    <div className={classes.outputRating}>
+                      {("averageRating" in filteredBook.volumeInfo) ? 
+                        <Rating name="read-only" value={filteredBook.volumeInfo.averageRating} precision={0.5} readOnly size="medium"/> :
+                        <Rating name="read-only" value={0} precision={0.5} readOnly size="medium"/>
+                      }
+                      <Typography variant="subtitle1">
+                        {("averageRating" in filteredBook.volumeInfo) ? 
+                          <div>
+                            ({filteredBook.volumeInfo.averageRating})
+                          </div> :
+                          <div> 
+                            (0)
+                          </div>  
+                        }
+                      </Typography>
+                    </div>                 
+ 
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="subtitle2">
+                    {filteredBook.volumeInfo.title}
+                  </Typography>
+                  <br />
+                  <Typography variant="subtitle1">  
+                    {filteredBook.volumeInfo.authors}
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    {filteredBook.volumeInfo.description}
+                  </Typography>
+                </Grid>
               </Grid>
-            ))}
-          </Grid>  
+            </Grid>
+          </div>
         </Grid>
-      </Grid>
+      ))}
 
       <Grid container spacing={0}>
         <div>
@@ -201,9 +212,8 @@ const ReviewPage = ( props ) => {
         <div style={{width: "100%"}}>
           <FormGroup>
             <TextField id="review" value={reviewText} variant="outlined" multiline size="small" rowsMax="4" fullWidth onChange={handleReviewChange} label="Kirjoita arvostelu"/>
-            <span>&nbsp;</span>
 
-            <div className={classes.rating}>
+            <div className={classes.inputRating}>
               <Rating
                 name="hover-feedback"
                 value={stars}
@@ -220,9 +230,20 @@ const ReviewPage = ( props ) => {
               </div>
             </div>
           </FormGroup>
-          <div>
-          {(writer && reviewText && stars) ? <Button variant="contained" id={"addButton"} onClick={addBook}> Lähetä</Button> : <Button variant="contained" id={"addButton"} disabled onClick={addBook}> Lähetä</Button>}   
-          </div>
+          <Grid container spacing={1}>
+            <Grid container item xs={12} spacing={0} padding={0}>
+              <Grid item xs={4}>
+                <div>
+                  {(writer && reviewText && stars) ? <Button variant="contained" id={"addButton"} onClick={addBook}> Lähetä</Button> : <Button variant="contained" id={"addButton"} disabled onClick={addBook}> Lähetä</Button>}   
+                </div>
+              </Grid>
+              <Grid item xs={8}>
+                <div className={classes.message}>
+                  {message ? <Alert severity={messageType}>{message}</Alert> : null}
+                </div>
+              </Grid>
+            </Grid>
+          </Grid> 
         </div>
       </Grid>
 
@@ -234,22 +255,34 @@ const ReviewPage = ( props ) => {
             </Typography>
         </div>  
       </Grid>
-
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {reviewsToShow ? reviewsToShow.map((review) => (
-              <div key={review._id}>
-                <Box component="fieldset" mb={-3} borderColor="transparent">
-                  <Rating name="read-only" value={review.stars} precision={0.5} readOnly /> {review.date}
-                </Box>
-                <p>"{review.reviewtext}" - {review.writer}</p>
-              </div>
-            )) : ["Teokselle ei löydy arvosteluja"]}
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>      
+      {reviewsToShow ? reviewsToShow.map((review) => (        
+        <div key={review._id}>
+          <div className={classes.root}>
+            <Grid container spacing={1}>
+              <Grid container item xs={12} spacing={0} padding={0}>
+                <Grid item xs={6}>
+                  <div className={classes.outputRating}>
+                    <Rating name="read-only" value={review.stars} precision={0.5} readOnly size="small"/>
+                  </div>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="caption">
+                    {review.date}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container item xs={12} spacing={0}>
+                <Grid item xs={12}>
+                  <Typography variant="caption">
+                    "{review.reviewtext}" - {review.writer}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </div>
+        </div>
+      )) : ["Teokselle ei löydy arvosteluja"]}
+    </div>     
   )
 }
 
