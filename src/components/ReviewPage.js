@@ -11,18 +11,18 @@
 // for writing and sending a review. Creates the user interface to 
 // write a review text and submit it 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import NoImage from "../noImage.png";
+//import NoImage from "../noImage.png";
 import bookService from "../services/data";
-//import NoImage from "../logo.svg";
+import NoImage from "../KirjApp_logo2.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
 // Router
-import { BrowserRouter as Router, Switch, Route, Link, useParams } from "react-router-dom"
+import { /*BrowserRouter as Router, Switch, Route, Link,*/ useParams } from "react-router-dom"
 import {Img} from 'react-image';
 // tekstikenttien näyttäminen
 import FormGroup from '@material-ui/core/FormGroup';
@@ -94,11 +94,17 @@ const ReviewPage = ( props ) => {
   const classes = useStyles();
 
   // haetaan kirjan arvostelut (parametrina kirjan id)
-  bookService
-    .getReviews(id)
-    .then(returnedReviews => {
-      setReviewsToShow(returnedReviews)
-    });
+  useEffect(() => {
+    let mounted = true
+    bookService
+      .getReviews(id)
+      .then(returnedReviews => {
+        if (mounted) {
+          setReviewsToShow(returnedReviews)
+        }
+      });
+      return () => mounted = false;
+  });
 
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
@@ -122,7 +128,7 @@ const ReviewPage = ( props ) => {
         setReviewsToShow(returnedBook.reviews)
       })
       .catch(error => {
-        //console.log(error.response.data)
+        console.log(error)
         setMessage("Arvostelusi tallentamisessa tapahtui virhe")
         setMessageType("error")   
     })
@@ -255,6 +261,7 @@ const ReviewPage = ( props ) => {
             </Typography>
         </div>  
       </Grid>
+
       {reviewsToShow ? reviewsToShow.map((review) => (        
         <div key={review._id}>
           <div className={classes.root}>

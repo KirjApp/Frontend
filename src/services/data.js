@@ -19,7 +19,7 @@ const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
         q: `${newFilter}`,
-        maxResults: 20,
+        //maxResults: 20,
         projection: 'full'
     }
   })
