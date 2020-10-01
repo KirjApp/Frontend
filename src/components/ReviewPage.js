@@ -93,12 +93,25 @@ const ReviewPage = ( props ) => {
 
   const classes = useStyles();
 
+  
   // haetaan kirjan arvostelut (parametrina kirjan id)
   bookService
     .getReviews(id)
     .then(returnedReviews => {
+      if (returnedReviews) { 
+		returnedReviews.forEach(review => {
+		  review.date = modifyDate(review.date)
+		})
+	  }
       setReviewsToShow(returnedReviews)
     });
+	
+  // muokataan Date haluttuun muotoon. tulee funktioon muodossa
+  // 2020-10-01T12:28:52.033Z (String)
+  const modifyDate = (date) => {
+	return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
+  }
+
 
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
