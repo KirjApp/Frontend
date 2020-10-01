@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="203.59792mm"
+   height="118.9163mm"
+   viewBox="0 0 203.59792 118.9163"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
+   sodipodi:docname="KirjApp_logo2.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.83972969"
+     inkscape:cx="384.0212"
+     inkscape:cy="297.07024"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g6578"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:object-nodes="true"
+     inkscape:snap-bbox="false"
+     inkscape:snap-nodes="false"
+     inkscape:snap-global="true"
+     inkscape:window-width="1252"
+     inkscape:window-height="1174"
+     inkscape:window-x="679"
+     inkscape:window-y="44"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-3.7625223,-79.135647)">
+    <g
+       id="g6582" />
+    <g
+       id="g6621"
+       transform="translate(-20.865515,-160.25576)">
+      <g
+         id="g11297"
+         transform="matrix(4.668944,0,0,4.668944,-91.734557,-522.01486)">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="30.247746"
+           y="179.63141"
+           id="text1691"><tspan
+             sodipodi:role="line"
+             id="tspan1689"
+             x="30.247746"
+             y="179.63141"
+             style="fill:#008000;stroke-width:0.264583">KirjApp</tspan></text>
+        <rect
+           style="fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.236241"
+           id="rect1687"
+           width="15.581731"
+           height="1.7189666"
+           x="90.679192"
+           y="-142.59827"
+           transform="rotate(134.74061)" />
+        <rect
+           style="fill:#ffffff;stroke-width:0.264583"
+           id="rect6511"
+           width="1.6915802"
+           height="3.488884"
+           x="36.104664"
+           y="163.30559" />
+        <g
+           id="g6578">
+          <rect
+             style="fill:#0000ff;fill-rule:evenodd;stroke-width:0.264583"
+             id="rect3111"
+             width="1.5012442e-06"
+             height="3.4131322"
+             x="25.269789"
+             y="174.64191" />
+          <rect
+             style="fill:#0000ff;fill-rule:evenodd;stroke-width:0.264583"
+             id="rect3113"
+             width="3.0687097e-06"
+             height="7.6243864e-06"
+             x="25.269789"
+             y="174.64191" />
+          <rect
+             style="fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.236241"
+             id="rect1687-3"
+             width="15.58173"
+             height="1.7189666"
+             x="-159.06281"
+             y="104.93111"
+             transform="matrix(-0.70389833,-0.71030074,-0.71030074,0.70389833,0,0)" />
+          <rect
+             style="fill:#0000ff;fill-rule:evenodd;stroke-width:0.264583"
+             id="rect3113-9"
+             width="3.0687097e-06"
+             height="7.6243864e-06"
+             x="25.242455"
+             y="-176.98553"
+             transform="scale(1,-1)" />
+          <rect
+             style="fill:#ffffff;stroke-width:0.264583"
+             id="rect6511-8"
+             width="1.6915802"
+             height="3.4888842"
+             x="36.077328"
+             y="-188.32185"
+             transform="scale(1,-1)" />
+        </g>
+        <ellipse
+           style="fill:#0000ff;stroke-width:0.263817"
+           id="path6586"
+           cx="25.708828"
+           cy="175.84334"
+           rx="0.78614861"
+           ry="1.4418368" />
+      </g>
+    </g>
+  </g>
+</svg>

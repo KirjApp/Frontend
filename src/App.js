@@ -24,7 +24,7 @@ import TextField from '@material-ui/core/TextField';
 // kirja-kortti painonapiksi
 import ButtonBase from '@material-ui/core/ButtonBase';
 // Router
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom"
+import { /*BrowserRouter as Router,*/ Switch, Route, Link } from "react-router-dom"
 // sovelluksen otsikko
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -160,7 +160,7 @@ const App = () => {
 
               <Grid container spacing={2}>
                 <div>
-                  <span>&nbsp;</span>
+                  <br />
                   <form className={classes.filterTextField} noValidate autoComplete="off">
                     <TextField id="searchText" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
                   </form>
@@ -169,7 +169,7 @@ const App = () => {
 
               <Grid container spacing={0}>
                 <div>
-                  <span>&nbsp;</span>
+                  <br />
                   <Typography variant="subtitle1" color="inherit">
                     Hakutuloksia: {selectedBooks ? selectedBooks.length : 0} 
                   </Typography>
@@ -216,7 +216,7 @@ const App = () => {
       
               <Grid container spacing={0}>
                 <div>
-                  <span>&nbsp;</span>
+                  <br />
                   <Typography variant="h6" color="inherit">
                     Suosituimmat kirjat
                   </Typography>
