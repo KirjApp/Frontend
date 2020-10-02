@@ -168,7 +168,12 @@ const ReviewPage = ( props ) => {
   const handleReviewChange = (event) => {
     setReviewText(event.target.value)
   }
-    
+  
+  // näytetään kirjailijat halutussa muodossa
+  const splitAuthors = (authors) => {
+	return authors.join(', ')
+  }
+	
   return (
     <div>
       <br /> 
@@ -199,7 +204,7 @@ const ReviewPage = ( props ) => {
                           </div>  
                         }
                       </Typography>
-                    </div>                 
+                    </div>
  
                 </Grid>
                 <Grid item xs={7}>
@@ -208,7 +213,7 @@ const ReviewPage = ( props ) => {
                   </Typography>
                   <br />
                   <Typography variant="subtitle1">  
-                    {filteredBook.volumeInfo.authors}
+                    {splitAuthors(filteredBook.volumeInfo.authors)}
                   </Typography>
                   <br />
                   <Typography variant="caption">
