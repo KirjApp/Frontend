@@ -239,13 +239,13 @@ const ReviewPage = ( props ) => {
       <Grid container spacing={2}>  
         <div>
           <FormGroup>
-            <br />
+            <span>&nbsp;</span>
             <TextField id="writer" value={writer} variant="outlined"  size="small" onChange={handleWriterChange} label="Nimimerkki"/>
           </FormGroup>
         </div>
         <div style={{width: "100%"}}>
           <FormGroup>
-            <br />
+            <span>&nbsp;</span>
             <TextField id="review" value={reviewText} variant="outlined" multiline size="small" rowsMax="4" fullWidth onChange={handleReviewChange} label="Kirjoita arvostelu"/>
 
             <div className={classes.inputRating}>
