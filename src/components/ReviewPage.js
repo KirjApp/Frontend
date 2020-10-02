@@ -213,7 +213,7 @@ const ReviewPage = ( props ) => {
                   </Typography>
                   <br />
                   <Typography variant="subtitle1">  
-                    {splitAuthors(filteredBook.volumeInfo.authors)}
+                    {filteredBook.volumeInfo.authors ? splitAuthors(filteredBook.volumeInfo.authors) : ""}
                   </Typography>
                   <br />
                   <Typography variant="caption">

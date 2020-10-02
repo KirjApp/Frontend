@@ -123,6 +123,11 @@ const App = () => {
   const padding = {
     padding: 5
   };
+  
+ // näytetään kirjailijat halutussa muodossa
+  const splitAuthors = (authors) => {
+    return authors.join(', ')
+  }
 
   //const match = useRouteMatch("/reviews/:id")
   //const book = match 
@@ -200,7 +205,7 @@ const App = () => {
                                     {book.volumeInfo.title}
                                   </Typography>
                                   <Typography variant="caption" color="textSecondary" component="p">
-                                    {book.volumeInfo.authors}
+                                    {book.volumeInfo.authors ? splitAuthors(book.volumeInfo.authors) : ""}
                                   </Typography>
                                 </CardContent>
                               </Card>
