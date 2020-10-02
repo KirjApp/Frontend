@@ -1,4 +1,4 @@
-// Contributor(s): Esa Mäkipää, Taika Tulonen
+// Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
 // Basic code for creating the view. I have used learnings from 
@@ -32,6 +32,8 @@ import Button from '@material-ui/core/Button';
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
 import Box from '@material-ui/core/Box';
 import Alert from '@material-ui/lab/Alert';
+// arvostelujen erottamiseen toisistaan
+import Divider from '@material-ui/core/Divider';
 
 // tähtien arvoa vastaavat sanalliset kuvaukset
 const labels = {
@@ -65,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  //lisätty 25.9.2020
+  // viesti arvostelun lisäämisen onnistumisesta tai epäonnistumisesta
   message: {
     width: '70%',
     '& > * + *': {
@@ -89,36 +91,43 @@ const ReviewPage = ( props ) => {
   const [hover, setHover] = React.useState(-1);
   // Viestit
   const [ message, setMessage ] = useState(null)
-  const [ messageType, setMessageType ] = useState('')
+  const [ messageType, setMessageType ] = useState("")
+  // kirjan nimi selaimen tabin päivittämistä varten
+  const [ title, setTitle ] = useState("")
 
   const classes = useStyles();
 
-  
+  // Esa Mäkipää, Juho Hyödynmaa
   // haetaan kirjan arvostelut (parametrina kirjan id)
   useEffect(() => {
     let mounted = true
+    let selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})
+    document.title = "KirjApp " + title
     bookService
       .getReviews(id)
       .then(returnedReviews => {
         if (mounted) {
-	      if (returnedReviews) { 
-		    returnedReviews.forEach(review => {
-		    review.date = modifyDate(review.date)
-		  })
-	    }
+          setTitle(selectedBookTitle)
+	        if (returnedReviews) { 
+		        returnedReviews.forEach(review => {
+		          review.date = modifyDate(review.date)
+		        })
+	        }
           setReviewsToShow(returnedReviews)
-        }
+        } 
       });
-      return () => mounted = false;
-  });
-	
+      return () => {
+        document.title = "KirjApp"
+        mounted = false;
+      }
+  }, [props.books, title, id]);
+  
+  // Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
   // 2020-10-01T12:28:52.033Z (String)
   const modifyDate = (date) => {
-	return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
+	  return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
   }
-
-
 
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
@@ -168,8 +177,8 @@ const ReviewPage = ( props ) => {
          <div className={classes.root}>
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={0} padding={0}>
-                <Grid item xs={6}>
-                  
+                <Grid item xs={5}>
+
                     <Img  
                       src={!("imageLinks" in filteredBook.volumeInfo) ?  `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
                       alt="Book" width="170px" height="250px"
@@ -193,8 +202,8 @@ const ReviewPage = ( props ) => {
                     </div>                 
  
                 </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="subtitle2">
+                <Grid item xs={7}>
+                  <Typography variant="h6">
                     {filteredBook.volumeInfo.title}
                   </Typography>
                   <br />
@@ -203,7 +212,13 @@ const ReviewPage = ( props ) => {
                   </Typography>
                   <br />
                   <Typography variant="caption">
-                    {filteredBook.volumeInfo.description}
+                    {("description" in filteredBook.volumeInfo) ? 
+                      <div>
+                        <TextField id="review" value={filteredBook.volumeInfo.description} variant="outlined" multiline size="small" rows="9" rowsMax="9" fullWidth label="Kuvaus:"/>
+                      </div> :
+                      <div> 
+                      </div>  
+                    }
                   </Typography>
                 </Grid>
               </Grid>
@@ -224,13 +239,13 @@ const ReviewPage = ( props ) => {
       <Grid container spacing={2}>  
         <div>
           <FormGroup>
-            <span>&nbsp;</span>
+            <br />
             <TextField id="writer" value={writer} variant="outlined"  size="small" onChange={handleWriterChange} label="Nimimerkki"/>
-            <span>&nbsp;</span>
           </FormGroup>
         </div>
         <div style={{width: "100%"}}>
           <FormGroup>
+            <br />
             <TextField id="review" value={reviewText} variant="outlined" multiline size="small" rowsMax="4" fullWidth onChange={handleReviewChange} label="Kirjoita arvostelu"/>
 
             <div className={classes.inputRating}>
@@ -250,6 +265,7 @@ const ReviewPage = ( props ) => {
               </div>
             </div>
           </FormGroup>
+          <br />
           <Grid container spacing={1}>
             <Grid container item xs={12} spacing={0} padding={0}>
               <Grid item xs={4}>
@@ -266,16 +282,19 @@ const ReviewPage = ( props ) => {
           </Grid> 
         </div>
       </Grid>
-
+      
+      <br />
       <Grid container spacing={0}>
         <div>
           <br />
-            <Typography variant="h6" color="inherit">
-              Kirjan arvostelut
-            </Typography>
+          <Typography variant="h6" color="inherit">
+            KirjApp käyttäjien antamat arvostelut:
+          </Typography>
+          <br />
         </div>  
       </Grid>
-
+      
+      
       {reviewsToShow ? reviewsToShow.map((review) => (        
         <div key={review._id}>
           <div className={classes.root}>
@@ -287,22 +306,23 @@ const ReviewPage = ( props ) => {
                   </div>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="caption">
+                  <Typography variant="subtitle2">
                     {review.date}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container item xs={12} spacing={0}>
                 <Grid item xs={12}>
-                  <Typography variant="caption">
+                  <Typography variant="subtitle2">
                     "{review.reviewtext}" - {review.writer}
                   </Typography>
                 </Grid>
               </Grid>
             </Grid>
           </div>
+          <Divider />
         </div>
-      )) : ["Teokselle ei löydy arvosteluja"]}
+      )) : <Typography variant="body1">Teokselle ei löydy arvosteluja</Typography>}     
     </div>     
   )
 }

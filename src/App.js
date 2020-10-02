@@ -40,16 +40,15 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles((theme) => ({
-
   bookCard: {
     height: 250,
-    width: 120,
+    width: 140,
     backgroundColor: "#E5E5E5",
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   media: {
     height: 120,
-    width: 120,
+    width: 140,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   button: {
     display: "flex",
     flexWrap: "wrap",
-    minWidth: 120,
+    minWidth: 140,
     width: "100%",
   },
   // sovelluksen otsikko
@@ -88,17 +87,18 @@ const App = () => {
 
   // hakusanaa vastaavien kirjojen haku serveriltä
   useEffect(() => {
+    document.title = "KirjApp"
     let mounted = true
     if (newFilter.trim() !== "" && newFilter.trim().length > 0) {
-    bookService.getAll(newFilter).then((books) => {
-      if (mounted) {
-        // asetetaan valitut kirjat
-        setSelectedBooks(books);
-      }
-    });
-  } 
+      bookService.getAll(newFilter).then((books) => {
+        if (mounted) {
+          // asetetaan valitut kirjat
+          setSelectedBooks(books);
+        }
+      });
+    }
 
-  return () => mounted = false;
+    return () => mounted = false;
 
   }, [newFilter]);
 
@@ -147,7 +147,7 @@ const App = () => {
             <div>
               <Typography variant="body1">
                 <Link style={padding} to="/">Etusivu</Link>
-              </Typography>  
+              </Typography> 
             </div>
             <br />
             <ReviewPage books={selectedBooks} />
@@ -182,7 +182,7 @@ const App = () => {
                     {selectedBooks ? selectedBooks.map((book) => (
                       <Grid key={book.id} item>
                         <div className={classes.button}>
-                          <ButtonBase> 
+                          <ButtonBase>
 
                             <CardActionArea component={Link} to={`/reviews/${book.id}`}> 
                               <Card className={classes.bookCard}>
@@ -191,15 +191,15 @@ const App = () => {
                                   image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
                                   alt="Book" width="80px" height="100px"                  
                                 />
-                                <CardContent>
+                                <CardContent style={{width: "75%"}}>
                                   {("averageRating" in book.volumeInfo) ? 
                                     <Rating name="read-only" value={book.volumeInfo.averageRating} precision={0.5} readOnly size="small"/> :
                                     <Rating name="read-only" value={0} precision={0.5} readOnly size="small"/>
                                   }
-                                  <Typography gutterBottom variant="subtitle2" component="h2">
+                                  <Typography gutterBottom variant="caption" component="h2">
                                     {book.volumeInfo.title}
                                   </Typography>
-                                  <Typography variant="body2" color="textSecondary" component="p">
+                                  <Typography variant="caption" color="textSecondary" component="p">
                                     {book.volumeInfo.authors}
                                   </Typography>
                                 </CardContent>
@@ -218,7 +218,7 @@ const App = () => {
                 <div>
                   <br />
                   <Typography variant="h6" color="inherit">
-                    Suosituimmat kirjat
+                    Suosituimmat kirjat 
                   </Typography>
                 </div>
               </Grid>
