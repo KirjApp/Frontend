@@ -13,8 +13,8 @@
 
 import React, { useState, useEffect } from "react";
 
-//import NoImage from "../noImage.png";
 import bookService from "../services/data";
+// KirjApp-logo esim. tulostumaan tyhjä kansikuvan tilalle
 import NoImage from "../KirjApp_logo2.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -74,6 +74,10 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
     },
   },
+  // arvostelujen välinen jakoviiva (viivan väri)
+  divider: {
+    backgroundColor: "#E5E5E5",
+  },
 }));
 
 const ReviewPage = ( props ) => {
@@ -94,6 +98,8 @@ const ReviewPage = ( props ) => {
   const [ messageType, setMessageType ] = useState("")
   // kirjan nimi selaimen tabin päivittämistä varten
   const [ title, setTitle ] = useState("")
+  // tila LÄHETÄ-painonapille
+  const [ buttonPressed, setButtonPressed ] = useState(false)
 
   const classes = useStyles();
 
@@ -120,7 +126,7 @@ const ReviewPage = ( props ) => {
         document.title = "KirjApp"
         mounted = false;
       }
-  }, [props.books, title, id]);
+  }, [props.books, title, id, buttonPressed]);
   
   // Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
@@ -157,6 +163,7 @@ const ReviewPage = ( props ) => {
     })
       setMessage("Arvostelusi on tallennettu")
       setMessageType("success")
+    setButtonPressed(true)
   }       
     
   // writer input
@@ -208,18 +215,18 @@ const ReviewPage = ( props ) => {
  
                 </Grid>
                 <Grid item xs={7}>
-                  <Typography variant="h6">
+                  <Typography variant="subtitle2">
                     {filteredBook.volumeInfo.title}
                   </Typography>
                   <br />
-                  <Typography variant="subtitle1">  
-                    {filteredBook.volumeInfo.authors ? splitAuthors(filteredBook.volumeInfo.authors) : ""}
+                  <Typography variant="body2">  
+                    Tekijä(t): {filteredBook.volumeInfo.authors ? splitAuthors(filteredBook.volumeInfo.authors) : ""}
                   </Typography>
                   <br />
                   <Typography variant="caption">
                     {("description" in filteredBook.volumeInfo) ? 
                       <div>
-                        <TextField id="review" value={filteredBook.volumeInfo.description} variant="outlined" multiline size="small" rows="9" rowsMax="9" fullWidth label="Kuvaus:"/>
+                        <TextField id="review" inputProps={{style: {fontSize: 14}}} value={filteredBook.volumeInfo.description} variant="outlined" multiline size="small" rows="8" rowsMax="8" fullWidth label="Kuvaus:"/>
                       </div> :
                       <div> 
                       </div>  
@@ -293,39 +300,43 @@ const ReviewPage = ( props ) => {
         <div>
           <br />
           <Typography variant="h6" color="inherit">
-            KirjApp käyttäjien antamat arvostelut:
+            KirjApp-käyttäjien antamat arvostelut:
           </Typography>
           <br />
         </div>  
       </Grid>
-      
       
       {reviewsToShow ? reviewsToShow.map((review) => (        
         <div key={review._id}>
           <div className={classes.root}>
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={0} padding={0}>
-                <Grid item xs={6}>
+                <Grid item xs={2}>
+                  <Typography variant="caption">
+                    KirjApp tähdet:
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
                   <div className={classes.outputRating}>
                     <Rating name="read-only" value={review.stars} precision={0.5} readOnly size="small"/>
                   </div>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="subtitle2">
+                  <Typography variant="caption">
                     {review.date}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container item xs={12} spacing={0}>
                 <Grid item xs={12}>
-                  <Typography variant="subtitle2">
+                  <Typography variant="caption">
                     "{review.reviewtext}" - {review.writer}
                   </Typography>
                 </Grid>
               </Grid>
             </Grid>
           </div>
-          <Divider />
+          <Divider className={classes.divider} />
         </div>
       )) : <Typography variant="body1">Teokselle ei löydy arvosteluja</Typography>}     
     </div>     

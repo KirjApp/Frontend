@@ -6,7 +6,7 @@
 // Full stak open 2020 course by University of Helsinki
 //
 // Description: Promises for getting book data, saving book and/or review data.
-// and getting reviews related to seleted book.
+// and getting reviews related to selected book.
 // Axios library is used for communication between browser and server
 
 import axios from 'axios'
@@ -19,7 +19,7 @@ const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
         q: `${newFilter}`,
-        //maxResults: 20,
+        maxResults: 12,
         projection: 'full'
     }
   })

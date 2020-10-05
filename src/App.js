@@ -42,13 +42,14 @@ import CardMedia from '@material-ui/core/CardMedia';
 const useStyles = makeStyles((theme) => ({
   bookCard: {
     height: 250,
-    width: 140,
+    width: 130,
     backgroundColor: "#E5E5E5",
-    padding: theme.spacing(1),
+    padding: theme.spacing(0),
+    flexWrap: "nowrap",
   },
   media: {
     height: 120,
-    width: 140,
+    width: 130,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -56,23 +57,28 @@ const useStyles = makeStyles((theme) => ({
   filterTextField: {
     "& > *": {
       margin: theme.spacing(1),
-      width: "80ch",
+      width: "70ch",
     },
     backgroundColor: "#FFFFFF",
   },
   // kirjakortin painonappi
   button: {
     display: "flex",
-    flexWrap: "wrap",
-    minWidth: 140,
+    flexWrap: "nowrap",
+    minWidth: 130,
     width: "100%",
   },
   // sovelluksen otsikko
   appHeader: {
     flexGrow: 1,
-    width: "80ch"
+    width: "70ch"
     //bacgroundColor: "#E5E5E5"
-  },  
+  },
+  typography: {
+    // In Chinese and Japanese the characters are usually larger,
+    // so a smaller fontsize may be appropriate.
+    fontSize: 10,
+  },   
 }));
 
 const App = () => {
@@ -124,6 +130,7 @@ const App = () => {
     padding: 5
   };
   
+ // Juho Hyödynmaa
  // näytetään kirjailijat halutussa muodossa
   const splitAuthors = (authors) => {
     return authors.join(', ')
@@ -157,9 +164,6 @@ const App = () => {
             <br />
             <ReviewPage books={selectedBooks} />
           </Route>
-          <Route path="/reviews/">
-            <ReviewPage books={selectedBooks} />
-          </Route>
           <Route path="/">
             <div>
 
@@ -181,49 +185,50 @@ const App = () => {
                 </div>
               </Grid>
 
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Grid container spacing={2}>
-                    {selectedBooks ? selectedBooks.map((book) => (
-                      <Grid key={book.id} item>
-                        <div className={classes.button}>
-                          <ButtonBase>
 
-                            <CardActionArea component={Link} to={`/reviews/${book.id}`}> 
-                              <Card className={classes.bookCard}>
-                                <CardMedia
-                                  className={classes.media}
-                                  image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
-                                  alt="Book" width="80px" height="100px"                  
-                                />
-                                <CardContent style={{width: "75%"}}>
-                                  {("averageRating" in book.volumeInfo) ? 
-                                    <Rating name="read-only" value={book.volumeInfo.averageRating} precision={0.5} readOnly size="small"/> :
-                                    <Rating name="read-only" value={0} precision={0.5} readOnly size="small"/>
-                                  }
-                                  <Typography gutterBottom variant="caption" component="h2">
-                                    {book.volumeInfo.title}
-                                  </Typography>
-                                  <Typography variant="caption" color="textSecondary" component="p">
-                                    {book.volumeInfo.authors ? splitAuthors(book.volumeInfo.authors) : ""}
-                                  </Typography>
-                                </CardContent>
-                              </Card>
-                            </CardActionArea>
+              <Grid container item xs={12}>
+                <Grid container spacing={1}>
+                  {selectedBooks ? selectedBooks.map((book) => (
+                    <Grid key={book.id} item>
+                      <div className={classes.button}>
 
-                          </ButtonBase>
-                        </div>
-                     </Grid>
-                    )) : []}
-                  </Grid>
+                        <ButtonBase>
+
+                          <CardActionArea component={Link} to={`/reviews/${book.id}`}> 
+                            <Card className={classes.bookCard}>
+                              <CardMedia
+                                className={classes.media}
+                                image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
+                                alt="Book" width="80px" height="100px"                  
+                              />
+                              <CardContent>
+                                {("averageRating" in book.volumeInfo) ? 
+                                  <Rating name="read-only" value={book.volumeInfo.averageRating} precision={0.5} readOnly size="small"/> :
+                                  <Rating name="read-only" value={0} precision={0.5} readOnly size="small"/>
+                                }
+                                <Typography className={classes.typography} variant="caption" component="h2">
+                                  {book.volumeInfo.title}
+                                </Typography>
+                                <Typography className={classes.typography} variant="caption" color="textSecondary" component="p">
+                                  {book.volumeInfo.authors ? splitAuthors(book.volumeInfo.authors) : ""}
+                                </Typography>
+                              </CardContent>
+                            </Card>
+                          </CardActionArea>
+
+                        </ButtonBase>
+
+                      </div>
+                    </Grid>
+                  )) : []}
                 </Grid>
               </Grid>
-      
+    
               <Grid container spacing={0}>
                 <div>
                   <br />
                   <Typography variant="h6" color="inherit">
-                    Suosituimmat kirjat 
+                     
                   </Typography>
                 </div>
               </Grid>
