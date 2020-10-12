@@ -1,15 +1,15 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen
 //
 // Esa Mäkipää: 
-// Basic code for getting data and filtering. I have used learnings from 
-// Full stack open 2020 course by University of Helsinki
+// Kirjadtan haun perusrunko. Olen hyödyntänyt Full stack open 2020
+// 2020 -kurssilla (Helsingin yliopisto) oppimaani
 //
 // Taika Tulonen:
-// Implementation of Material-UI related components for showing
-// books and building UI in general
+// Alustava käyttöliittymän rakennus Material-UI komponenteilla
+// kirjadatan näyttämiseksi kortteina
 //
-// Description: Main page of the application. Creates the user interface to 
-// write search text and show the search results
+// Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
+// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
 
 import React, { useState, useEffect } from "react";
 // yksittäisen kirjan sivu
@@ -75,8 +75,6 @@ const useStyles = makeStyles((theme) => ({
     //bacgroundColor: "#E5E5E5"
   },
   typography: {
-    // In Chinese and Japanese the characters are usually larger,
-    // so a smaller fontsize may be appropriate.
     fontSize: 10,
   },   
 }));

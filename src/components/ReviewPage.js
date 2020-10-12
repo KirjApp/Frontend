@@ -1,15 +1,16 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Basic code for creating the view. I have used learnings from 
-// Full stack open 2020 course by University of Helsinki
+// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
+// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+//
+// Juho Hyödynmaa: Arvostelujen päivämäärän muokkauksen totetutus
 //
 // Taika Tulonen:
-// Implementation of Material-UI related components for building UI
+// Alustava käyttöliittymän rakennus Material-UI komponenteilla
 //
-// Description: View for showing a single book with information and
-// for writing and sending a review. Creates the user interface to 
-// write a review text and submit it 
+// Kuvaus: Yksittäisen kirjan näkymä valituilla tiedoilla. Näkymässä voidaan
+// kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liitetyt arvostelut.
 
 import React, { useState, useEffect } from "react";
 
@@ -96,8 +97,6 @@ const ReviewPage = ( props ) => {
   // Viestit
   const [ message, setMessage ] = useState(null)
   const [ messageType, setMessageType ] = useState("")
-  // kirjan nimi selaimen tabin päivittämistä varten
-  const [ title, setTitle ] = useState("")
   // tila LÄHETÄ-painonapille
   const [ buttonPressed, setButtonPressed ] = useState(false)
 
@@ -108,25 +107,27 @@ const ReviewPage = ( props ) => {
   useEffect(() => {
     let mounted = true
     let selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})
-    document.title = "KirjApp " + title
+    document.title = "KirjApp " + selectedBookTitle
     bookService
       .getReviews(id)
       .then(returnedReviews => {
         if (mounted) {
-          setTitle(selectedBookTitle)
-	        if (returnedReviews) { 
-		        returnedReviews.forEach(review => {
-		          review.date = modifyDate(review.date)
-		        })
-	        }
+          if (returnedReviews) { 
+            returnedReviews.forEach(review => {
+              review.date = modifyDate(review.date)
+            }) 
+          }
           setReviewsToShow(returnedReviews)
+          if (buttonPressed) {
+            setButtonPressed(false)
+          }
         } 
       });
       return () => {
         document.title = "KirjApp"
         mounted = false;
       }
-  }, [props.books, title, id, buttonPressed]);
+  }, [props.books, id, buttonPressed]);
   
   // Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
@@ -138,7 +139,7 @@ const ReviewPage = ( props ) => {
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
     event.preventDefault()
-    
+
     const bookObject = {
       book_id: id,
       writer: writer,
@@ -153,17 +154,14 @@ const ReviewPage = ( props ) => {
     // lisää kirjan ja arvostelun tiedot (book object)
     bookService
       .create(bookObject)
-      .then(returnedBook => {
-        setReviewsToShow(returnedBook.reviews)
-      })
       .catch(error => {
         console.log(error)
         setMessage("Arvostelusi tallentamisessa tapahtui virhe")
         setMessageType("error")   
-    })
+      })
       setMessage("Arvostelusi on tallennettu")
       setMessageType("success")
-    setButtonPressed(true)
+      setButtonPressed(true)
   }       
     
   // writer input
