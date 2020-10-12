@@ -1,60 +1,113 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen
 //
 // Esa Mäkipää: 
-// Basic code for getting data and filtering. I have used learnings from 
-// Full stak open 2020 course by University of Helsinki
+// Kirjadtan haun perusrunko. Olen hyödyntänyt Full stack open 2020
+// 2020 -kurssilla (Helsingin yliopisto) oppimaani
 //
 // Taika Tulonen:
-// Implementation of Material-UI related components for showing
-// books
+// Alustava käyttöliittymän rakennus Material-UI komponenteilla
+// kirjadatan näyttämiseksi kortteina
 //
-// Description: Main page of the application. Creates the user interface to 
-// write search text and show the search results
+// Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
+// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
 
 import React, { useState, useEffect } from "react";
-import Book from "./components/Book";
+// yksittäisen kirjan sivu
+import ReviewPage from "./components/ReviewPage";
 import bookService from "./services/data";
+// tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
+import NoImage from "./noImage.png";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
 import TextField from '@material-ui/core/TextField';
+// kirja-kortti painonapiksi
+import ButtonBase from '@material-ui/core/ButtonBase';
+// Router
+import { /*BrowserRouter as Router,*/ Switch, Route, Link } from "react-router-dom"
+// sovelluksen otsikko
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+// tekstityylit
+import Typography from '@material-ui/core/Typography';
+
+// tähtien antamiseen
+import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
+// kirjakortin muodostamiseen
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles((theme) => ({
-  
-  paper: {
+  bookCard: {
     height: 250,
-    width: 120,
-    // background color added
+    width: 130,
     backgroundColor: "#E5E5E5",
+    padding: theme.spacing(0),
+    flexWrap: "nowrap",
   },
-  // Material-UI input component Text Field added
+  media: {
+    height: 120,
+    width: 130,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // syötekenttä hakusanalle
   filterTextField: {
     "& > *": {
       margin: theme.spacing(1),
-      width: "80ch",
+      width: "70ch",
     },
     backgroundColor: "#FFFFFF",
-	},
+  },
+  // kirjakortin painonappi
+  button: {
+    display: "flex",
+    flexWrap: "nowrap",
+    minWidth: 130,
+    width: "100%",
+  },
+  // sovelluksen otsikko
+  appHeader: {
+    flexGrow: 1,
+    width: "70ch"
+    //bacgroundColor: "#E5E5E5"
+  },
+  typography: {
+    fontSize: 10,
+  },   
 }));
 
 const App = () => {
-  // recommendedBooks reserved to handle recommended books
+  // varattu suositeltavien/suosituimpien kirjojen käsittelyyn?
   //const [recommendedBooks, setRecommendedBooks] = useState([]);
+  // hakusanan tuottamat kirjat
   const [selectedBooks, setSelectedBooks] = useState([]);
+  // hakusana
   const [newFilter, setNewFilter] = useState("");
-
+    
   const classes = useStyles();
 
-  // get data from server
+  // hakusanaa vastaavien kirjojen haku serveriltä
   useEffect(() => {
-    bookService.getAll(newFilter).then((books) => {
-      // set data
-      setSelectedBooks(books);
-    });
+    document.title = "KirjApp"
+    let mounted = true
+    if (newFilter.trim() !== "" && newFilter.trim().length > 0) {
+      bookService.getAll(newFilter).then((books) => {
+        if (mounted) {
+          // asetetaan valitut kirjat
+          setSelectedBooks(books);
+        }
+      });
+    }
+
+    return () => mounted = false;
+
   }, [newFilter]);
 
-  // filter input
+  
+  // tapahtumankäsittelijä hakusanalle
   const handleFilterChange = (event) => {
     if (event.target.value) {
       setSelectedBooks(
@@ -71,44 +124,118 @@ const App = () => {
     setNewFilter(event.target.value);
   };
 
+  const padding = {
+    padding: 5
+  };
+  
+ // Juho Hyödynmaa
+ // näytetään kirjailijat halutussa muodossa
+  const splitAuthors = (authors) => {
+    return authors.join(', ')
+  }
+
+  //const match = useRouteMatch("/reviews/:id")
+  //const book = match 
+  //  ? selectedBooks.find(book => book.id === match.params.id)
+  //  : null
+
   return (
-    <Container maxWidth="sm">
-      <h2>Books</h2>
-
-      <Grid container spacing={2}>
-        
-        <form className={classes.filterTextField} noValidate autoComplete="off">
-          <TextField id="outlined-basic" label="Hae kirjan tai kirjoittajan nimellä" variant="outlined" onChange={handleFilterChange} />
-        </form>
-
-        <div>
-          Hakutuloksia: {selectedBooks.length}
+    <div>
+      <Container maxWidth="sm">
+        <div className={classes.appHeader}>
+          <AppBar position="static">
+            <Toolbar variant="dense">
+              <Typography variant="h6" color="inherit">
+                KirjApp
+              </Typography>
+            </Toolbar>
+          </AppBar>
         </div>
-        
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {selectedBooks.map((book) => (
-                <Grid key={book.id} item>
-                  <Paper className={classes.paper}>
-                  
-                    <Book
-                      id={book.id}
-                      title={book.volumeInfo.title}
-                      authors={book.volumeInfo.authors} 
-                    />
-                
-                  </Paper>
+      
+        <Switch>
+          <Route path="/reviews/:id">
+            <div>
+              <Typography variant="body1">
+                <Link style={padding} to="/">Etusivu</Link>
+              </Typography> 
+            </div>
+            <br />
+            <ReviewPage books={selectedBooks} />
+          </Route>
+          <Route path="/">
+            <div>
+
+              <Grid container spacing={2}>
+                <div>
+                  <br />
+                  <form className={classes.filterTextField} noValidate autoComplete="off">
+                    <TextField id="searchText" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
+                  </form>
+                </div>
+              </Grid>
+
+              <Grid container spacing={0}>
+                <div>
+                  <br />
+                  <Typography variant="subtitle1" color="inherit">
+                    Hakutuloksia: {selectedBooks ? selectedBooks.length : 0} 
+                  </Typography>
+                </div>
+              </Grid>
+
+
+              <Grid container item xs={12}>
+                <Grid container spacing={1}>
+                  {selectedBooks ? selectedBooks.map((book) => (
+                    <Grid key={book.id} item>
+                      <div className={classes.button}>
+
+                        <ButtonBase>
+
+                          <CardActionArea component={Link} to={`/reviews/${book.id}`}> 
+                            <Card className={classes.bookCard}>
+                              <CardMedia
+                                className={classes.media}
+                                image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
+                                alt="Book" width="80px" height="100px"                  
+                              />
+                              <CardContent>
+                                {("averageRating" in book.volumeInfo) ? 
+                                  <Rating name="read-only" value={book.volumeInfo.averageRating} precision={0.5} readOnly size="small"/> :
+                                  <Rating name="read-only" value={0} precision={0.5} readOnly size="small"/>
+                                }
+                                <Typography className={classes.typography} variant="caption" component="h2">
+                                  {book.volumeInfo.title}
+                                </Typography>
+                                <Typography className={classes.typography} variant="caption" color="textSecondary" component="p">
+                                  {book.volumeInfo.authors ? splitAuthors(book.volumeInfo.authors) : ""}
+                                </Typography>
+                              </CardContent>
+                            </Card>
+                          </CardActionArea>
+
+                        </ButtonBase>
+
+                      </div>
+                    </Grid>
+                  )) : []}
                 </Grid>
-              ))}
-            </Grid>
-          </Grid>
-        </Grid>
+              </Grid>
+    
+              <Grid container spacing={0}>
+                <div>
+                  <br />
+                  <Typography variant="h6" color="inherit">
+                     
+                  </Typography>
+                </div>
+              </Grid>
 
-        <h3>Suosituimmat kirjat</h3>
-
-      </Grid>
-    </Container>
+            </div>
+          </Route>
+        </Switch>
+      </Container>
+    </div>
   );
 };
 
