@@ -11,10 +11,12 @@
 
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/api/books'
-const myBaseUrl = 'http://localhost:3001/api/myBooks'
-//const baseUrl = '/api/books'
-//const myBaseUrl = '/api/myBooks'
+// base urls with the server declared
+//const baseUrl = 'http://localhost:3001/api/books'
+//const myBaseUrl = 'http://localhost:3001/api/myBooks'
+// relative base urls
+const baseUrl = '/api/books'
+const myBaseUrl = '/api/myBooks'
 
 // kirjojen haku Google Books APIsta
 const getAll = newFilter => {
