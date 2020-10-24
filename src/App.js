@@ -1,7 +1,7 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen
 //
 // Esa Mäkipää: 
-// Kirjadtan haun perusrunko. Olen hyödyntänyt Full stack open 2020
+// Kirjadatan haun perusrunko. Olen hyödyntänyt Full stack open 2020
 // 2020 -kurssilla (Helsingin yliopisto) oppimaani
 //
 // Taika Tulonen:
@@ -14,6 +14,8 @@
 import React, { useState, useEffect } from "react";
 // yksittäisen kirjan sivu
 import ReviewPage from "./components/ReviewPage";
+import CreateProfilePage from "./components/CreateProfilePage";
+import LoginPage from "./components/LoginPage";
 import bookService from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
@@ -21,6 +23,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import TextField from '@material-ui/core/TextField';
+//import Button from '@material-ui/core/Button';
 // kirja-kortti painonapiksi
 import ButtonBase from '@material-ui/core/ButtonBase';
 // Router
@@ -76,6 +79,18 @@ const useStyles = makeStyles((theme) => ({
   },
   typography: {
     fontSize: 10,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  link: {
+    '& > * + *': {
+      marginRight: theme.spacing(2),
+      textDecoration: "none",
+    }, 
+  },
+  title: {
+    flexGrow: 1,
   },   
 }));
 
@@ -86,8 +101,24 @@ const App = () => {
   const [selectedBooks, setSelectedBooks] = useState([]);
   // hakusana
   const [newFilter, setNewFilter] = useState("");
+  // kirjautunut käyttäjä
+//  const [loggedUser, setLoggedUser] = useState(null);
     
   const classes = useStyles();
+
+/*  
+  // kirjautuneen käyttäjän näyttäminen (KESKENERÄINEN!)
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedUser")
+    if (loggedUserJSON) {
+      const loggedUser = JSON.parse(loggedUserJSON)
+      setLoggedUser(loggedUser)
+      //console.log(user)
+      //console.log(`Käyttäjä ${user.username} on kirjautuneena`)
+      bookService.setToken(loggedUser.token)
+    }
+  }, [])
+*/
 
   // hakusanaa vastaavien kirjojen haku serveriltä
   useEffect(() => {
@@ -124,6 +155,24 @@ const App = () => {
     setNewFilter(event.target.value);
   };
 
+  // tapahtumankäsittelijä profiilin luonnille
+  //const handleCreateProfileClick = (event) => {
+  //  console.log('Painoit luo profiili');
+  //};
+
+  // tapahtumankäsittelijä kirjautumiselle
+  //const handleLoginClick = (event) => {
+  //  console.log('Painoit kirjaudu sisään');
+  //};  
+
+/*
+  // tapahtumankäsittelijä uloskirjautumiselle (KESKENERÄINEN!)
+  const handleLogoutClick = (event) => {
+    //console.log('Painoit kirjaudu ulos');
+    window.localStorage.removeItem("loggedUser")
+  };
+*/
+
   const padding = {
     padding: 5
   };
@@ -145,20 +194,51 @@ const App = () => {
         <div className={classes.appHeader}>
           <AppBar position="static">
             <Toolbar variant="dense">
-              <Typography variant="h6" color="inherit">
+              <Typography variant="h6" color="inherit" className={classes.title}>
                 KirjApp
               </Typography>
             </Toolbar>
-          </AppBar>
+          </AppBar>     
         </div>
-      
-        <Switch>
-          <Route path="/reviews/:id">
+        
+        <Grid
+          justify="space-between"
+          container 
+          spacing={2}
+        >
+          <Grid item>
             <div>
-              <Typography variant="body1">
+              <Typography  className={classes.link} variant="body1">
                 <Link style={padding} to="/">Etusivu</Link>
+              </Typography>
+              </div>  
+          </Grid>
+          <Grid item>
+            <div>
+            <Typography  className={classes.link} variant="body1">
+                <Link style={padding} to="/profile">Luo profiili</Link>
               </Typography> 
             </div>
+          </Grid>
+          <Grid item>
+            <div>
+            <Typography  className={classes.link} variant="body1">
+                <Link style={padding} to="/login">Kirjaudu sisään</Link>
+              </Typography> 
+            </div>
+          </Grid>
+       </Grid>
+      
+        <Switch>
+          <Route path="/profile">
+            <br />
+            <CreateProfilePage />
+          </Route>
+          <Route path="/login">
+            <br />
+            <LoginPage />
+          </Route>
+          <Route path="/reviews/:id">
             <br />
             <ReviewPage books={selectedBooks} />
           </Route>

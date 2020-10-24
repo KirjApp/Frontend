@@ -13,8 +13,17 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/api/books'
 const myBaseUrl = 'http://localhost:3001/api/myBooks'
+const createUserBaseUrl = 'http://localhost:3001/api/users'
+const loginBaseUrl = 'http://localhost:3001/api/login'
 //const baseUrl = '/api/books'
 //const myBaseUrl = '/api/myBooks'
+
+let token = null
+
+// tokenin asettaminen
+const setToken = newToken => {
+  token = `bearer ${newToken}`
+}
 
 // kirjojen haku Google Books APIsta
 const getAll = newFilter => {
@@ -30,7 +39,10 @@ const getAll = newFilter => {
 
 // kirjan ja/tai arvostelujen tallentaminen tietokantaan (MongoDB)
 const create = newObject => {
-  const request = axios.post(myBaseUrl, newObject)
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.post(myBaseUrl, newObject, config)
   return request.then(response => response.data)
 }
 
@@ -40,4 +52,14 @@ const getReviews = id => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create, getReviews }
+const createUser = async newUserObject => {
+  const response = await axios.post(createUserBaseUrl, newUserObject)
+  return response.data
+}
+
+const loginUser = async credentials => {
+  const response = await axios.post(loginBaseUrl, credentials)
+  return response.data
+}
+
+export default { getAll, create, getReviews, createUser, loginUser, setToken }
