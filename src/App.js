@@ -16,6 +16,7 @@ import React, { useState, useEffect } from "react";
 import ReviewPage from "./components/ReviewPage";
 import CreateProfilePage from "./components/CreateProfilePage";
 import LoginPage from "./components/LoginPage";
+import UserPage from "./components/UserPage";
 import bookService from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
@@ -23,7 +24,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import TextField from '@material-ui/core/TextField';
-//import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 // kirja-kortti painonapiksi
 import ButtonBase from '@material-ui/core/ButtonBase';
 // Router
@@ -81,7 +82,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
+    color: "black"
   },
   link: {
     '& > * + *': {
@@ -102,11 +104,11 @@ const App = () => {
   // hakusana
   const [newFilter, setNewFilter] = useState("");
   // kirjautunut käyttäjä
-//  const [loggedUser, setLoggedUser] = useState(null);
+  const [loggedUser, setLoggedUser] = useState(null);
     
   const classes = useStyles();
 
-/*  
+  
   // kirjautuneen käyttäjän näyttäminen (KESKENERÄINEN!)
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser")
@@ -116,9 +118,9 @@ const App = () => {
       //console.log(user)
       //console.log(`Käyttäjä ${user.username} on kirjautuneena`)
       bookService.setToken(loggedUser.token)
-    }
+    }   
   }, [])
-*/
+
 
   // hakusanaa vastaavien kirjojen haku serveriltä
   useEffect(() => {
@@ -165,13 +167,22 @@ const App = () => {
   //  console.log('Painoit kirjaudu sisään');
   //};  
 
-/*
+
   // tapahtumankäsittelijä uloskirjautumiselle (KESKENERÄINEN!)
   const handleLogoutClick = (event) => {
     //console.log('Painoit kirjaudu ulos');
-    window.localStorage.removeItem("loggedUser")
+    setLoggedUser(null)
+    window.localStorage.removeItem("loggedUser") 
   };
-*/
+
+  // tapahtumankäsittelijä käyttäjän kirjautumiselle (KESKENERÄINEN!)
+  const handleUserLogin = (user) => {
+    //console.log('Painoit kirjaudu ulos');
+    setLoggedUser(user)
+    window.localStorage.setItem(
+      "loggedUser", JSON.stringify(user)
+    )
+  };
 
   const padding = {
     padding: 5
@@ -197,6 +208,10 @@ const App = () => {
               <Typography variant="h6" color="inherit" className={classes.title}>
                 KirjApp
               </Typography>
+              <Typography variant="subtitle2" color="inherit">
+                {loggedUser ? `Kirjautunut: ${loggedUser.username}` : ""}
+              </Typography>
+                {loggedUser ? <Button color="inherit" className={classes.menuButton} onClick={handleLogoutClick} title="Kirjaudu ulos" component={Link} to={"/"}>Kirjaudu ulos</Button> : ""}               
             </Toolbar>
           </AppBar>     
         </div>
@@ -206,24 +221,24 @@ const App = () => {
           container 
           spacing={2}
         >
-          <Grid item>
+          <Grid item xs={6}>
             <div>
               <Typography  className={classes.link} variant="body1">
                 <Link style={padding} to="/">Etusivu</Link>
               </Typography>
               </div>  
           </Grid>
-          <Grid item>
+          <Grid item xs={3}>
             <div>
-            <Typography  className={classes.link} variant="body1">
-                <Link style={padding} to="/profile">Luo profiili</Link>
+              <Typography  className={classes.link} variant="body1">
+                {loggedUser ? "" : <Link style={padding} to="/profile">Luo profiili</Link>}
               </Typography> 
             </div>
           </Grid>
-          <Grid item>
+          <Grid item xs={3}>
             <div>
             <Typography  className={classes.link} variant="body1">
-                <Link style={padding} to="/login">Kirjaudu sisään</Link>
+                {loggedUser ? <Link style={padding} to="/user">Omat tiedot</Link> : <Link style={padding} to="/login">Kirjaudu sisään</Link>}
               </Typography> 
             </div>
           </Grid>
@@ -236,7 +251,11 @@ const App = () => {
           </Route>
           <Route path="/login">
             <br />
-            <LoginPage />
+            <LoginPage onLoggedUser={handleUserLogin} />
+          </Route>
+          <Route path="/user">
+            <br />
+            <UserPage />
           </Route>
           <Route path="/reviews/:id">
             <br />

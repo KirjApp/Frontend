@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginPage = () => {
+const LoginPage = ( props ) => {
 
   // kirjautunut käyttäjä
   const [user, setUser] = useState(null); 
@@ -81,9 +81,10 @@ const LoginPage = () => {
       )
       // asetetaan token kirjautuneelle käyttäjälle
       bookService.setToken(loggedUser.token)
-      setUser(loggedUser)  
+      await setUser(loggedUser)
+      props.onLoggedUser(loggedUser);
       setMessageType("success")
-      setMessage(`Käyttäjä ${user.username} on kirjautunut`)
+      setMessage(`Käyttäjä ${loggedUser.username} on kirjautunut`)
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -138,8 +139,8 @@ const LoginPage = () => {
             </Grid>
           </Grid> 
         </div>
-      </Grid>        
-    </div>     
+      </Grid>
+    </div>
   )
 }
 

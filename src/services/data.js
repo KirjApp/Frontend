@@ -13,6 +13,7 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/api/books'
 const myBaseUrl = 'http://localhost:3001/api/myBooks'
+const myReviewsBaseUrl = 'http://localhost:3001/api/userReviews'
 const createUserBaseUrl = 'http://localhost:3001/api/users'
 const loginBaseUrl = 'http://localhost:3001/api/login'
 //const baseUrl = '/api/books'
@@ -46,9 +47,19 @@ const create = newObject => {
   return request.then(response => response.data)
 }
 
-// kirjan arvostelujen haku tietokannasta (MongoDB)
+// kirjan kaikkien arvostelujen haku tietokannasta (MongoDB)
 const getReviews = id => {
   const request = axios.get(myBaseUrl + '/' + id)
+  return request.then(response => response.data)
+}
+
+// kirjan arvostelujen haku tietokannasta kirjautuneelle käyttäjälle (MongoDB)
+const getUserReviews = (loggedUser) => {
+  setToken(loggedUser.token)
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.get(myReviewsBaseUrl, config)
   return request.then(response => response.data)
 }
 
@@ -62,4 +73,4 @@ const loginUser = async credentials => {
   return response.data
 }
 
-export default { getAll, create, getReviews, createUser, loginUser, setToken }
+export default { getAll, create, getReviews, getUserReviews, createUser, loginUser, setToken }
