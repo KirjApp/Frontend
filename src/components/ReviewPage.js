@@ -85,6 +85,8 @@ const ReviewPage = ( props ) => {
 
   // kirja id
   const id = useParams().id
+  // kirjan nimi
+  const selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})[0]
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // arvosteluteksti
@@ -106,8 +108,7 @@ const ReviewPage = ( props ) => {
   // haetaan kirjan arvostelut (parametrina kirjan id)
   useEffect(() => {
     let mounted = true
-    let selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})
-    document.title = "KirjApp " + selectedBookTitle
+  document.title = "KirjApp: " + selectedBookTitle
     bookService
       .getReviews(id)
       .then(returnedReviews => {
@@ -139,9 +140,10 @@ const ReviewPage = ( props ) => {
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
     event.preventDefault()
-
+	
     const bookObject = {
       book_id: id,
+      book_title: selectedBookTitle,
       writer: writer,
       reviewtext: reviewText,
       stars: stars
