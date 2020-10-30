@@ -163,7 +163,7 @@ const UserPage = () => {
               <Grid container item xs={12} spacing={0}>
                 <Grid item xs={12}>
                   <Typography variant="caption">
-                    {review.book_id ? review.book_id : ""} --- Teoksen nimi tähän --- 
+                    {review.book_title ? review.book_title : ""}
                   </Typography>
                 </Grid>
               </Grid>
