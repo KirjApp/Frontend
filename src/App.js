@@ -14,27 +14,34 @@
 import React, { useState, useEffect } from "react";
 // yksittäisen kirjan sivu
 import ReviewPage from "./components/ReviewPage";
+// profiilin luonti
 import CreateProfilePage from "./components/CreateProfilePage";
+// kirjautuminen
 import LoginPage from "./components/LoginPage";
+// kirjautuneen käyttäjän tiedot
 import UserPage from "./components/UserPage";
+// promiset
 import bookService from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
+// tyyliy
 import { makeStyles } from "@material-ui/core/styles";
+// grid
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+// tekstikenttä
 import TextField from '@material-ui/core/TextField';
+// painonappi
 import Button from '@material-ui/core/Button';
 // kirja-kortti painonapiksi
 import ButtonBase from '@material-ui/core/ButtonBase';
-// Router
-import { /*BrowserRouter as Router,*/ Switch, Route, Link } from "react-router-dom"
+// Switch, Route, Link
+import { Switch, Route, Link, useRouteMatch } from "react-router-dom"
 // sovelluksen otsikko
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
-
 // tähtien antamiseen
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
 // kirjakortin muodostamiseen
@@ -100,27 +107,23 @@ const App = () => {
   // varattu suositeltavien/suosituimpien kirjojen käsittelyyn?
   //const [recommendedBooks, setRecommendedBooks] = useState([]);
   // hakusanan tuottamat kirjat
-  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [ selectedBooks, setSelectedBooks ] = useState([]);
   // hakusana
-  const [newFilter, setNewFilter] = useState("");
+  const [ newFilter, setNewFilter ] = useState("");
   // kirjautunut käyttäjä
-  const [loggedUser, setLoggedUser] = useState(null);
+  const [ loggedUser, setLoggedUser ] = useState(null);
     
   const classes = useStyles();
 
-  
-  // kirjautuneen käyttäjän näyttäminen (KESKENERÄINEN!)
+  // kirjautuneen käyttäjän haku local storagesta
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser")
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
       setLoggedUser(loggedUser)
-      //console.log(user)
-      //console.log(`Käyttäjä ${user.username} on kirjautuneena`)
       bookService.setToken(loggedUser.token)
     }   
   }, [])
-
 
   // hakusanaa vastaavien kirjojen haku serveriltä
   useEffect(() => {
@@ -139,7 +142,6 @@ const App = () => {
 
   }, [newFilter]);
 
-  
   // tapahtumankäsittelijä hakusanalle
   const handleFilterChange = (event) => {
     if (event.target.value) {
@@ -156,28 +158,19 @@ const App = () => {
     }
     setNewFilter(event.target.value);
   };
-
-  // tapahtumankäsittelijä profiilin luonnille
-  //const handleCreateProfileClick = (event) => {
-  //  console.log('Painoit luo profiili');
-  //};
-
-  // tapahtumankäsittelijä kirjautumiselle
-  //const handleLoginClick = (event) => {
-  //  console.log('Painoit kirjaudu sisään');
-  //};  
-
-
-  // tapahtumankäsittelijä uloskirjautumiselle (KESKENERÄINEN!)
-  const handleLogoutClick = (event) => {
-    //console.log('Painoit kirjaudu ulos');
+ 
+  // tapahtumankäsittelijä uloskirjautumiselle
+  const handleUserLogout = (event) => {
     setLoggedUser(null)
-    window.localStorage.removeItem("loggedUser") 
+    bookService.setToken(null)
+    // poistetaan kirjautuneen käyttäjän tieodt local stragesta
+    //window.localStorage.removeItem("loggedUser")
+    // poistetaan kaikki tallennettu tieto local storagesta 
+    window.localStorage.clear() 
   };
 
-  // tapahtumankäsittelijä käyttäjän kirjautumiselle (KESKENERÄINEN!)
+  // tapahtumankäsittelijä käyttäjän kirjautumiselle
   const handleUserLogin = (user) => {
-    //console.log('Painoit kirjaudu ulos');
     setLoggedUser(user)
     window.localStorage.setItem(
       "loggedUser", JSON.stringify(user)
@@ -194,10 +187,11 @@ const App = () => {
     return authors.join(', ')
   }
 
-  //const match = useRouteMatch("/reviews/:id")
-  //const book = match 
-  //  ? selectedBooks.find(book => book.id === match.params.id)
-  //  : null
+  // klikatun kirjan tiedot (välitetään ReviewPage-komponentille)
+  const match = useRouteMatch("/reviews/:id")
+  const book = match
+    ? selectedBooks.filter(book => book.id === match.params.id).map(selectedBook => {return selectedBook})
+    : null
 
   return (
     <div>
@@ -211,7 +205,7 @@ const App = () => {
               <Typography variant="subtitle2" color="inherit">
                 {loggedUser ? `Kirjautunut: ${loggedUser.username}` : ""}
               </Typography>
-                {loggedUser ? <Button color="inherit" className={classes.menuButton} onClick={handleLogoutClick} title="Kirjaudu ulos" component={Link} to={"/"}>Kirjaudu ulos</Button> : ""}               
+                {loggedUser ? <Button color="inherit" className={classes.menuButton} onClick={handleUserLogout} title="Kirjaudu ulos" component={Link} to={"/"}>Kirjaudu ulos</Button> : ""}               
             </Toolbar>
           </AppBar>     
         </div>
@@ -259,7 +253,7 @@ const App = () => {
           </Route>
           <Route path="/reviews/:id">
             <br />
-            <ReviewPage books={selectedBooks} />
+            <ReviewPage books={book} />
           </Route>
           <Route path="/">
             <div>
@@ -268,7 +262,7 @@ const App = () => {
                 <div>
                   <br />
                   <form className={classes.filterTextField} noValidate autoComplete="off">
-                    <TextField id="searchText" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
+                    <TextField id="searchText" type="search" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
                   </form>
                 </div>
               </Grid>
@@ -282,7 +276,6 @@ const App = () => {
                 </div>
               </Grid>
 
-
               <Grid container item xs={12}>
                 <Grid container spacing={1}>
                   {selectedBooks ? selectedBooks.map((book) => (
@@ -295,7 +288,7 @@ const App = () => {
                             <Card className={classes.bookCard}>
                               <CardMedia
                                 className={classes.media}
-                                image={!("imageLinks" in book.volumeInfo) ?  `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
+                                image={!("imageLinks" in book.volumeInfo) ? `${NoImage}` : `${book.volumeInfo.imageLinks.smallThumbnail}`}
                                 alt="Book" width="80px" height="100px"                  
                               />
                               <CardContent>

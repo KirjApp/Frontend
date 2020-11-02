@@ -8,7 +8,7 @@
 // käyttäjän profiili antamalla nimimerkki ja salasana, jotka tallennetaan
 // tietokantaan
 
-import React, { useState, /*useEffect*/ } from "react";
+import React, { useState } from "react";
 import bookService from "../services/data";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -17,9 +17,12 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 // tekstikenttien näyttäminen
 import FormGroup from '@material-ui/core/FormGroup';
-// painonappi arvostelun lähettämiseen
+// painonappi
 import Button from '@material-ui/core/Button';
+// ilmoitusten näyttäminen (virheet ja onnistuneet toiminnot)
 import Alert from '@material-ui/lab/Alert';
+// navigointi
+import { useHistory } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
   // viestien asetukset (arvostelun lisäämisen onnistuminen tai epäonnistuminen)
@@ -32,7 +35,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CreateProfilePage = () => {
-  
+
+  // history-olio, jota voidaan käyttää navigoinnissa 
+  const history = useHistory()
+
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // salasana
@@ -42,10 +48,11 @@ const CreateProfilePage = () => {
   const [ messageType, setMessageType ] = useState("")
 
   const classes = useStyles();
-  
+
   const createProfile = async (event) => {
     event.preventDefault()
 
+    // muodostetaan käyttäjä-objekti
     const newUserObject = {
       username: writer,
       password: password,
@@ -53,29 +60,33 @@ const CreateProfilePage = () => {
   
     setWriter('')
     setPassword('')
+    // luodaan ja tallennetaan käyttäjä
     const newUser = await bookService
       .createUser(newUserObject)  
       .catch (error =>  {
-        console.log(error)
         setMessageType("error")
-        setMessage("Käyttäjän tallentamisessa tapahtui virhe")
+        setMessage(error.response.data.error)
         setTimeout(() => {
           setMessage(null)
-        }, 5000)
-      }) 
-    setMessageType("success")
-    setMessage(`Käyttäjä ${newUser.username} on tallennettu`)
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
- }
+        }, 3000)
+      })
+    if (newUser) {  
+      setMessageType("success")
+      setMessage(`Käyttäjä ${newUser.username} on tallennettu`)
+      setTimeout(() => {
+        setMessage(null)
+        // onnnistuneen profiilin luonnin jälkeen näytetään etusivu (kirjojen haku)
+        history.push("/")
+      }, 2000)
+    }
+  }  
 
-  // writer input
+  // asetetaan nimimerkki
   const handleWriterChange = (event) => {
     setWriter(event.target.value)
   }
     
-  // review input
+  // asetetaan arvostelu
   const handlePasswordChange = (event) => {
     setPassword(event.target.value)
   }
@@ -107,7 +118,7 @@ const CreateProfilePage = () => {
             <Grid container item xs={12} spacing={0} padding={0}>
               <Grid item xs={4}>
                 <div>
-                  {(writer && password) ? <Button variant="contained" id={"createProfileButton"} onClick={createProfile}> Luo profiili</Button> : <Button variant="contained" id={"createProfileButton"} disabled onClick={createProfile}> Luo profiili</Button>}   
+                  {(writer && password) ? <Button variant="contained" id={"createProfileButton"} onClick={createProfile} title="Luo profiili">Luo profiili</Button> : <Button variant="contained" id={"createProfileButton"} disabled onClick={createProfile}> Luo profiili</Button>}   
                 </div>
               </Grid>
               <Grid item xs={8}>

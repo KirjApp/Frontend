@@ -6,43 +6,21 @@
 //
 
 import React, { useState, useEffect } from "react";
-
+// promiset
 import bookService from "../services/data";
-// KirjApp-logo esim. tulostumaan tyhjä kansikuvan tilalle
-import NoImage from "../KirjApp_logo2.svg";
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
+// grid
 import Grid from "@material-ui/core/Grid";
-import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
-// Router
-import { /*BrowserRouter as Router, Switch, Route, Link,*/ useParams } from "react-router-dom"
-import {Img} from 'react-image';
-// tekstikenttien näyttäminen
-import FormGroup from '@material-ui/core/FormGroup';
-// painonappi arvostelun lähettämiseen
+// painonappi
 import Button from '@material-ui/core/Button';
 // tähtien antaminen
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
-import Box from '@material-ui/core/Box';
-import Alert from '@material-ui/lab/Alert';
 // arvostelujen erottamiseen toisistaan
 import Divider from '@material-ui/core/Divider';
-/*
-// tähtien arvoa vastaavat sanalliset kuvaukset
-const labels = {
-  0.5: 'Hyödytön',
-  1: 'Hyödytön+',
-  1.5: 'Huono',
-  2: 'Huono+',
-  2.5: 'Ok',
-  3: 'Ok+',
-  3.5: 'Hyvä',
-  4: 'Hyvä+',
-  4.5: 'Erinomainen',
-  5: 'Erinomainen+',
-};
-*/
+
 const useStyles = makeStyles((theme) => ({
   // kirjakortti (Paper Material-UI -komponentti)
   root: {
@@ -76,21 +54,11 @@ const useStyles = makeStyles((theme) => ({
 
 const UserPage = () => {
 
-  // kirja id
-  const id = useParams().id
   // nimimerkki
   const [ writer, setWriter ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")));
-  // arvosteluteksti
-  const [ reviewText, setReviewText ] = useState("");
   // kirjan arvostelut
   const [ userReviewsToShow, setUserReviewsToShow ] = useState([]);
-  // arvostelu tähdillä
-  const [stars, setStars] = React.useState(0);
-  const [hover, setHover] = React.useState(-1);
-  // Viestit
-  const [ message, setMessage ] = useState(null)
-  const [ messageType, setMessageType ] = useState("")
-  // tila LÄHETÄ-painonapille
+  // tila NÄYTÄ/PIILOTA ARVOSTELUNI -painonapille
   const [ userReviewsShown, setUserReviewsShown ] = useState(false)
 
   const classes = useStyles();
@@ -195,9 +163,9 @@ const UserPage = () => {
           </div>
           <Divider className={classes.divider} />
         </div>
-      )) : <Typography variant="body1">
+      )) : <div><Typography variant="body1">
           {userReviewsShown ? "Et ole vielä kirjoittanut arvosteluja" : ""}
-        </Typography>}
+        </Typography></div>}
     </div>     
   )
 }

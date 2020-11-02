@@ -13,17 +13,20 @@
 // kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liitetyt arvostelut.
 
 import React, { useState, useEffect } from "react";
-
+// promiset
 import bookService from "../services/data";
 // KirjApp-logo esim. tulostumaan tyhjä kansikuvan tilalle
 import NoImage from "../KirjApp_logo2.svg";
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
+// grid
 import Grid from "@material-ui/core/Grid";
+// tekstikenttä
 import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
 // Router
-import { /*BrowserRouter as Router, Switch, Route, Link,*/ useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import {Img} from 'react-image';
 // tekstikenttien näyttäminen
 import FormGroup from '@material-ui/core/FormGroup';
@@ -31,7 +34,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Button from '@material-ui/core/Button';
 // tähtien antaminen
 import Rating from '@material-ui/lab/Rating'; //vaatinee asennuksen: npm install @material-ui/lab
+// box
 import Box from '@material-ui/core/Box';
+// ilmoitusten näyttäminen (virheet ja onnistuneet toiminnot)
 import Alert from '@material-ui/lab/Alert';
 // arvostelujen erottamiseen toisistaan
 import Divider from '@material-ui/core/Divider';
@@ -55,13 +60,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
+  // tähtikenttä tähtien syöttämiseen arvostelun yhteydessä
   inputRating: {
     width: 200,
     height: 50,
     display: 'flex',
     alignItems: 'center',
   },
-  // tähtikenttä tähtien näyttämiseen
+  // tähtikenttä tähtien näyttämiseen arvostelujen listauksessa
   outputRating: {
     width: 150,
     height: 20,
@@ -85,6 +91,8 @@ const ReviewPage = ( props ) => {
 
   // kirja id
   const id = useParams().id
+  // kirjautunut käyttäjä
+  const [ user, setUser ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")) || null);
   // kirjan nimi
   const selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})[0]
   // nimimerkki
@@ -108,7 +116,7 @@ const ReviewPage = ( props ) => {
   // haetaan kirjan arvostelut (parametrina kirjan id)
   useEffect(() => {
     let mounted = true
-  document.title = "KirjApp: " + selectedBookTitle
+    document.title = "KirjApp: " + selectedBookTitle
     bookService
       .getReviews(id)
       .then(returnedReviews => {
@@ -128,7 +136,7 @@ const ReviewPage = ( props ) => {
         document.title = "KirjApp"
         mounted = false;
       }
-  }, [props.books, id, buttonPressed]);
+  }, [props.books, id, buttonPressed, selectedBookTitle]);
   
   // Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
@@ -166,12 +174,12 @@ const ReviewPage = ( props ) => {
       setButtonPressed(true)
   }       
     
-  // writer input
+  // asetetaan nimimerkki
   const handleWriterChange = (event) => {
     setWriter(event.target.value)
   }
     
-  // review input
+  // asetetaan arvostelu
   const handleReviewChange = (event) => {
     setReviewText(event.target.value)
   }
@@ -186,32 +194,32 @@ const ReviewPage = ( props ) => {
       <br /> 
       {props.books.filter(book => book.id === id).map(filteredBook => (
         <Grid key={filteredBook.id} item>
-         <div className={classes.root}>
+          <div className={classes.root}>
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={0} padding={0}>
                 <Grid item xs={5}>
 
-                    <Img  
-                      src={!("imageLinks" in filteredBook.volumeInfo) ?  `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
-                      alt="Book" width="170px" height="250px"
-                    /> 
+                  <Img  
+                    src={!("imageLinks" in filteredBook.volumeInfo) ? `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
+                    alt="Book" width="170px" height="250px"
+                  /> 
                     
-                    <div className={classes.outputRating}>
+                  <div className={classes.outputRating}>
+                    {("averageRating" in filteredBook.volumeInfo) ? 
+                      <Rating name="read-only" value={filteredBook.volumeInfo.averageRating} precision={0.5} readOnly size="medium"/> :
+                      <Rating name="read-only" value={0} precision={0.5} readOnly size="medium"/>
+                    }
+                    <Typography variant="subtitle1">
                       {("averageRating" in filteredBook.volumeInfo) ? 
-                        <Rating name="read-only" value={filteredBook.volumeInfo.averageRating} precision={0.5} readOnly size="medium"/> :
-                        <Rating name="read-only" value={0} precision={0.5} readOnly size="medium"/>
+                        <div>
+                          ({filteredBook.volumeInfo.averageRating})
+                        </div> :
+                        <div> 
+                          (0)
+                        </div>  
                       }
-                      <Typography variant="subtitle1">
-                        {("averageRating" in filteredBook.volumeInfo) ? 
-                          <div>
-                            ({filteredBook.volumeInfo.averageRating})
-                          </div> :
-                          <div> 
-                            (0)
-                          </div>  
-                        }
-                      </Typography>
-                    </div>
+                    </Typography>
+                  </div>
  
                 </Grid>
                 <Grid item xs={7}>
@@ -252,7 +260,7 @@ const ReviewPage = ( props ) => {
         <div>
           <FormGroup>
             <span>&nbsp;</span>
-            <TextField id="writer" value={writer} variant="outlined"  size="small" onChange={handleWriterChange} label="Nimimerkki"/>
+            {user ? <TextField id="writer" value={writer} variant="outlined" size="small" onChange={handleWriterChange} label="Nimimerkki"/> : <TextField id="writer" value={writer} variant="outlined" size="small" onChange={handleWriterChange} label="Nimimerkki"/>}
           </FormGroup>
         </div>
         <div style={{width: "100%"}}>
@@ -273,7 +281,9 @@ const ReviewPage = ( props ) => {
                 }}
               />
               <div>
-                {stars !== null && <Box ml={2} p={0}>{labels[hover !== -1 ? hover : stars]}</Box>}
+                <Typography variant="caption">
+                  {stars !== null && <Box ml={2} p={0}>{labels[hover !== -1 ? hover : stars]}</Box>}
+                </Typography>
               </div>
             </div>
           </FormGroup>
@@ -282,7 +292,7 @@ const ReviewPage = ( props ) => {
             <Grid container item xs={12} spacing={0} padding={0}>
               <Grid item xs={4}>
                 <div>
-                  {(writer && reviewText && stars) ? <Button variant="contained" id={"addButton"} onClick={addBook}> Lähetä</Button> : <Button variant="contained" id={"addButton"} disabled onClick={addBook}> Lähetä</Button>}   
+                  {((user ? user.username : writer) && reviewText && stars) ? <Button variant="contained" id={"addButton"} onClick={addBook}>Lähetä</Button> : <Button variant="contained" id={"addButton"} disabled onClick={addBook}>Lähetä</Button>}   
                 </div>
               </Grid>
               <Grid item xs={8}>
