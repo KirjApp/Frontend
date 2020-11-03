@@ -163,7 +163,10 @@ const ReviewPage = ( props ) => {
       })
       setMessage("Arvostelusi on tallennettu")
       setMessageType("success")
-      setButtonPressed(true)
+      // varmistetaan että arvostelu on tallennettu ennenkö buttonPressed aiheuttaa uuden arvostelujen haun
+      setTimeout(() => {
+        setButtonPressed(true)
+      }, 500)
   }       
     
   // writer input
