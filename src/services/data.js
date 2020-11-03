@@ -11,14 +11,24 @@
 
 import axios from 'axios'
 
+// kirjatiedot Google Books APIsta (hakusana)
 const baseUrl = 'http://localhost:3001/api/books'
+// kirjan ja/tai arvostelujen käsittely (MongoDB)
 const myBaseUrl = 'http://localhost:3001/api/myBooks'
+// kirjautuneen käyttäjän kirjoittamat arvostelut
 const myReviewsBaseUrl = 'http://localhost:3001/api/userReviews'
+// käyttäjän profiilin luonti
 const createUserBaseUrl = 'http://localhost:3001/api/users'
+// käyttäjän kirjutuminen
 const loginBaseUrl = 'http://localhost:3001/api/login'
-//const baseUrl = '/api/books'
-//const myBaseUrl = '/api/myBooks'
-
+/*
+// relatiiviset osoitteet
+const baseUrl = '/api/books'
+const myBaseUrl = '/api/myBooks'
+const myReviewsBaseUrl = '/api/userReviews'
+const createUserBaseUrl = '/api/users'
+const loginBaseUrl = '/api/login'
+*/
 let token = null
 
 // tokenin asettaminen
@@ -63,14 +73,24 @@ const getUserReviews = (loggedUser) => {
   return request.then(response => response.data)
 }
 
+// käyttäjän luonti ja tallennus tietokantaan (MongoDB)
 const createUser = async newUserObject => {
   const response = await axios.post(createUserBaseUrl, newUserObject)
   return response.data
 }
 
+// käyttäjän kirjautuminen
 const loginUser = async credentials => {
   const response = await axios.post(loginBaseUrl, credentials)
   return response.data
 }
 
-export default { getAll, create, getReviews, getUserReviews, createUser, loginUser, setToken }
+export default {
+  getAll,
+  create,
+  getReviews,
+  getUserReviews,
+  createUser,
+  loginUser,
+  setToken
+}

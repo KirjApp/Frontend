@@ -8,17 +8,24 @@
 // nimimerkki ja salasana
 
 import React, { useState, useEffect } from "react";
+// promiset
 import bookService from "../services/data";
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
+// grid
 import Grid from "@material-ui/core/Grid";
+// tekstikenttä
 import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
 // tekstikenttien näyttäminen
 import FormGroup from '@material-ui/core/FormGroup';
-// painonappi arvostelun lähettämiseen
+// painonappi
 import Button from '@material-ui/core/Button';
+// ilmoitusten näyttäminen (virheet ja onnistuneet toiminnot)
 import Alert from '@material-ui/lab/Alert';
+// navigointi
+import { useHistory } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
   // viestien asetukset (arvostelun lisäämisen onnistuminen tai epäonnistuminen)
@@ -32,32 +39,35 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginPage = ( props ) => {
 
+  // history-olio, jota voidaan käyttää navigoinnissa 
+  const history = useHistory()
+
   // kirjautunut käyttäjä
-  const [user, setUser] = useState(null); 
+  const [ user, setUser ] = useState(null); 
   // nimimerkki
-  const [writer, setWriter] = useState("");
+  const [ writer, setWriter ] = useState("");
   // salasana
-  const [password, setPassword] = useState("");
+  const [ password, setPassword ] = useState("");
   // Viestit
   const [ message, setMessage ] = useState(null)
   const [ messageType, setMessageType ] = useState("")
 
   const classes = useStyles();
   
+  // kirjautuneen käyttäjän haku local storagesta
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      //console.log(user)
-      //console.log(`Käyttäjä ${user.username} on kirjautuneena`)
       bookService.setToken(user.token)
     }
   }, [])
   
   const handleLogin = async (event) => {
     event.preventDefault()
-
+    
+    // käyttäjä-objekti
     const userObject = {
       username: writer,
       password: password,
@@ -65,15 +75,15 @@ const LoginPage = ( props ) => {
   
     setWriter("")
     setPassword("")
+    // kirjautuminen
     const loggedUser = await bookService
       .loginUser(userObject)
       .catch (error =>  {
-        console.log(error)
         setMessageType("error")
         setMessage(error.response.data.error)
         setTimeout(() => {
           setMessage(null)
-        }, 5000)
+        }, 3000)
       })
     if (loggedUser) {
       window.localStorage.setItem(
@@ -82,21 +92,24 @@ const LoginPage = ( props ) => {
       // asetetaan token kirjautuneelle käyttäjälle
       bookService.setToken(loggedUser.token)
       await setUser(loggedUser)
-      props.onLoggedUser(loggedUser);
+      // palautetaan tieto kirjutuneesta etusivulle
+      props.onLoggedUser(loggedUser)
       setMessageType("success")
       setMessage(`Käyttäjä ${loggedUser.username} on kirjautunut`)
       setTimeout(() => {
         setMessage(null)
-      }, 5000)
+        // onnnistuneen kirjautumisen jälkeen näytetään etusivu (kirjojen haku)
+        history.push("/")
+      }, 1000)
     }
   }
 
-  // writer input
+  // asetetaan nimimerkki
   const handleWriterChange = (event) => {
     setWriter(event.target.value)
   }
     
-  // review input
+  // asetetaan arvostelu
   const handlePasswordChange = (event) => {
     setPassword(event.target.value)
   }
@@ -128,7 +141,7 @@ const LoginPage = ( props ) => {
             <Grid container item xs={12} spacing={0} padding={0}>
               <Grid item xs={4}>
                 <div>
-                  {(writer && password) ? <Button variant="contained" id={"loginButton"} onClick={handleLogin}> Kirjaudu sisään</Button> : <Button variant="contained" id={"loginButton"} disabled onClick={handleLogin}> Kirjaudu sisään</Button>}   
+                  {(writer && password) ? <Button variant="contained" id={"loginButton"} onClick={handleLogin} title="Kirjaudu sisään"> Kirjaudu sisään</Button> : <Button variant="contained" id={"loginButton"} disabled onClick={handleLogin}> Kirjaudu sisään</Button>}   
                 </div>
               </Grid>
               <Grid item xs={8}>
