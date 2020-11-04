@@ -110,7 +110,20 @@ const ReviewPage = ( props ) => {
   // tila LÄHETÄ-painonapille
   const [ buttonPressed, setButtonPressed ] = useState(false)
 
+  // valittu kirja (tiistain 3.11. kokeiluja)
+  const [ selectedBook, setSelectedBook ] = useState(JSON.parse(window.localStorage.getItem("selectedBook")))
+  //const [ selectedBook, setSelectedBook ] = useState(props ? props.books : JSON.parse(window.localStorage.getItem("selectedBook")))
+
   const classes = useStyles();
+
+  // kirjan haku local storagesta (tiistain 3.11. kokeiluja)
+  useEffect(() => {
+    const selectedBookJSON = window.localStorage.getItem("selectedBook")
+    if (selectedBookJSON) {
+      const selectedBookJS = JSON.parse(selectedBookJSON)
+      setSelectedBook(selectedBookJS)
+    }
+  }, [])
 
   // Esa Mäkipää, Juho Hyödynmaa
   // haetaan kirjan arvostelut (parametrina kirjan id)
@@ -132,6 +145,7 @@ const ReviewPage = ( props ) => {
           }
         } 
       });
+      //bookService.getOne(id).then(book => {setSelectedBook(book)}) 
       return () => {
         document.title = "KirjApp"
         mounted = false;
@@ -191,11 +205,11 @@ const ReviewPage = ( props ) => {
   const splitAuthors = (authors) => {
 	return authors.join(', ')
   }
-	
+ 
   return (
     <div>
       <br /> 
-      {props.books.filter(book => book.id === id).map(filteredBook => (
+      {/*props.books.filter(book => book.id === id)*/selectedBook.map(filteredBook => (
         <Grid key={filteredBook.id} item>
           <div className={classes.root}>
             <Grid container spacing={1}>

@@ -13,6 +13,8 @@ import axios from 'axios'
 
 // kirjatiedot Google Books APIsta (hakusana)
 const baseUrl = 'http://localhost:3001/api/books'
+// kirjatiedot Google Books APIsta (hakusana)
+const oneBookBaseUrl = 'http://localhost:3001/api/book'
 // kirjan ja/tai arvostelujen käsittely (MongoDB)
 const myBaseUrl = 'http://localhost:3001/api/myBooks'
 // kirjautuneen käyttäjän kirjoittamat arvostelut
@@ -24,6 +26,7 @@ const loginBaseUrl = 'http://localhost:3001/api/login'
 /*
 // relatiiviset osoitteet
 const baseUrl = '/api/books'
+const oneBookBaseUrl = '/api/book'
 const myBaseUrl = '/api/myBooks'
 const myReviewsBaseUrl = '/api/userReviews'
 const createUserBaseUrl = '/api/users'
@@ -46,6 +49,16 @@ const getAll = newFilter => {
     }
   })
   return request.then(response => response.data.data.items)
+}
+
+// yhden kirjan haku tietokannasta kirjan id:n avulla (MongoDB)
+const getOne = id => {
+  const request = axios.get(oneBookBaseUrl + '/' + id, {
+    params: {
+      projection: 'full'
+    }  
+  })
+  return request.then(response => response.data.data)
 }
 
 // kirjan ja/tai arvostelujen tallentaminen tietokantaan (MongoDB)
@@ -87,6 +100,7 @@ const loginUser = async credentials => {
 
 export default {
   getAll,
+  getOne,
   create,
   getReviews,
   getUserReviews,
