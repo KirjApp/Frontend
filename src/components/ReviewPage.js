@@ -1,17 +1,3 @@
-// Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
-//
-// Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
-//
-// Juho Hyödynmaa: Arvostelujen päivämäärän muokkauksen totetutus
-//
-// Taika Tulonen:
-// Alustava käyttöliittymän rakennus Material-UI komponenteilla
-//
-// Kuvaus: Yksittäisen kirjan näkymä valituilla tiedoilla. Näkymässä voidaan
-// kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liitetyt arvostelut.
-
 import React, { useState, useEffect } from "react";
 // promiset
 import bookService from "../services/data";
@@ -40,7 +26,6 @@ import Box from '@material-ui/core/Box';
 import Alert from '@material-ui/lab/Alert';
 // arvostelujen erottamiseen toisistaan
 import Divider from '@material-ui/core/Divider';
-
 // tähtien arvoa vastaavat sanalliset kuvaukset
 const labels = {
   0.5: 'Hyödytön',
@@ -54,7 +39,6 @@ const labels = {
   4.5: 'Erinomainen',
   5: 'Erinomainen+',
 };
-
 const useStyles = makeStyles((theme) => ({
   // kirjakortti (Paper Material-UI -komponentti)
   root: {
@@ -88,13 +72,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ReviewPage = ( props ) => {
-
   // kirja id
   const id = useParams().id
+
   // kirjautunut käyttäjä
   const [ user, setUser ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")) || null);
-  // kirjan nimi
-  const selectedBookTitle = props.books.filter(book => book.id === id).map(selectedBook => {return selectedBook.volumeInfo.title})[0]
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // arvosteluteksti
@@ -109,14 +91,25 @@ const ReviewPage = ( props ) => {
   const [ messageType, setMessageType ] = useState("")
   // tila LÄHETÄ-painonapille
   const [ buttonPressed, setButtonPressed ] = useState(false)
+  // valittu kirja
+  const [ selectedBook, setSelectedBook ] = useState(props.books);
 
   const classes = useStyles();
-
+  
   // Esa Mäkipää, Juho Hyödynmaa
   // haetaan kirjan arvostelut (parametrina kirjan id)
   useEffect(() => {
     let mounted = true
-    document.title = "KirjApp: " + selectedBookTitle
+    bookService
+    .getOne(id)
+    .then(returnedBook => {
+      if (mounted) {
+        setSelectedBook(returnedBook)
+      }
+      document.title = "KirjApp: " + returnedBook.volumeInfo.title
+      console.log()
+      console.log(returnedBook.volumeInfo)
+    });
     bookService
       .getReviews(id)
       .then(returnedReviews => {
@@ -136,27 +129,25 @@ const ReviewPage = ( props ) => {
         document.title = "KirjApp"
         mounted = false;
       }
-  }, [props.books, id, buttonPressed, selectedBookTitle]);
+  }, [props.books, id, buttonPressed]);
   
   // Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
   // 2020-10-01T12:28:52.033Z (String)
   const modifyDate = (date) => {
-	  return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
+      return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
   }
-
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
     event.preventDefault()
-	
+    
     const bookObject = {
+      book_title: selectedBook.volumeInfo.title,
       book_id: id,
-      book_title: selectedBookTitle,
       writer: writer,
       reviewtext: reviewText,
       stars: stars
     }
-
     setWriter("")
     setReviewText("")
     setStars(0)
@@ -189,33 +180,31 @@ const ReviewPage = ( props ) => {
   
   // näytetään kirjailijat halutussa muodossa
   const splitAuthors = (authors) => {
-	return authors.join(', ')
+    return authors.join(', ')
   }
-	
+ 
   return (
     <div>
       <br /> 
-      {props.books.filter(book => book.id === id).map(filteredBook => (
-        <Grid key={filteredBook.id} item>
+        <Grid key={selectedBook.id} item>
           <div className={classes.root}>
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={0} padding={0}>
                 <Grid item xs={5}>
-
                   <Img  
-                    src={!("imageLinks" in filteredBook.volumeInfo) ? `${NoImage}` : `${filteredBook.volumeInfo.imageLinks.smallThumbnail}`}
+                    src={!("imageLinks" in Object(selectedBook.volumeInfo)) ? `${NoImage}` : `${selectedBook.volumeInfo.imageLinks.smallThumbnail}`}
                     alt="Book" width="170px" height="250px"
                   /> 
                     
                   <div className={classes.outputRating}>
-                    {("averageRating" in filteredBook.volumeInfo) ? 
-                      <Rating name="read-only" value={filteredBook.volumeInfo.averageRating} precision={0.5} readOnly size="medium"/> :
+                    {("averageRating" in Object(selectedBook.volumeInfo)) ? 
+                      <Rating name="read-only" value={selectedBook.volumeInfo.averageRating} precision={0.5} readOnly size="medium"/> :
                       <Rating name="read-only" value={0} precision={0.5} readOnly size="medium"/>
                     }
                     <Typography variant="subtitle1">
-                      {("averageRating" in filteredBook.volumeInfo) ? 
+                      {("averageRating" in Object(selectedBook.volumeInfo)) ? 
                         <div>
-                          ({filteredBook.volumeInfo.averageRating})
+                          ({selectedBook.volumeInfo.averageRating})
                         </div> :
                         <div> 
                           (0)
@@ -223,21 +212,20 @@ const ReviewPage = ( props ) => {
                       }
                     </Typography>
                   </div>
- 
                 </Grid>
                 <Grid item xs={7}>
                   <Typography variant="subtitle2">
-                    {filteredBook.volumeInfo.title}
+                    {Object(selectedBook.volumeInfo).title}
                   </Typography>
                   <br />
                   <Typography variant="body2">  
-                    Tekijä(t): {filteredBook.volumeInfo.authors ? splitAuthors(filteredBook.volumeInfo.authors) : ""}
+                    Tekijä(t): {Object(selectedBook.volumeInfo).authors ? splitAuthors(selectedBook.volumeInfo.authors) : ""}
                   </Typography>
                   <br />
                   <Typography variant="caption">
-                    {("description" in filteredBook.volumeInfo) ? 
+                    {("description" in Object(selectedBook.volumeInfo)) ? 
                       <div>
-                        <TextField id="review" inputProps={{style: {fontSize: 14}}} value={filteredBook.volumeInfo.description} variant="outlined" multiline size="small" rows="8" rowsMax="8" fullWidth label="Kuvaus:"/>
+                        <TextField id="review" inputProps={{style: {fontSize: 14}}} value={selectedBook.volumeInfo.description} variant="outlined" multiline size="small" rows="8" rowsMax="8" fullWidth label="Kuvaus:"/>
                       </div> :
                       <div> 
                       </div>  
@@ -248,8 +236,6 @@ const ReviewPage = ( props ) => {
             </Grid>
           </div>
         </Grid>
-      ))}
-
       <Grid container spacing={0}>
         <div>
           <br />
@@ -258,7 +244,6 @@ const ReviewPage = ( props ) => {
             </Typography>
         </div>  
       </Grid>    
-
       <Grid container spacing={2}>  
         <div>
           <FormGroup>
@@ -270,7 +255,6 @@ const ReviewPage = ( props ) => {
           <FormGroup>
             <span>&nbsp;</span>
             <TextField id="review" value={reviewText} variant="outlined" multiline size="small" rowsMax="4" fullWidth onChange={handleReviewChange} label="Kirjoita arvostelu"/>
-
             <div className={classes.inputRating}>
               <Rating
                 name="hover-feedback"
@@ -351,9 +335,8 @@ const ReviewPage = ( props ) => {
           </div>
           <Divider className={classes.divider} />
         </div>
-      )) : <Typography variant="body1">Teokselle ei löydy arvosteluja</Typography>}     
+      )) : <Typography variant="body1">Teokselle ei löydy arvosteluja.</Typography>}     
     </div>     
   )
 }
-
 export default ReviewPage;
