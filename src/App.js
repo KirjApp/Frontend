@@ -177,6 +177,14 @@ const App = () => {
     )
   };
 
+  // tapahtumankäsittelijä valitulle (klikatulle) kirjalle
+  const handleClickedBook = (book) => {
+    // tallennetaan valittu kirja local storageen
+    window.localStorage.setItem(
+      "selectedBook", JSON.stringify(book)
+    )
+  };
+
   const padding = {
     padding: 5
   };
@@ -253,7 +261,7 @@ const App = () => {
           </Route>
           <Route path="/reviews/:id">
             <br />
-            <ReviewPage books={book} />
+            <ReviewPage books={book} onClick={handleClickedBook(book)}/>
           </Route>
           <Route path="/">
             <div>
