@@ -107,8 +107,6 @@ const ReviewPage = ( props ) => {
         setSelectedBook(returnedBook)
       }
       document.title = "KirjApp: " + returnedBook.volumeInfo.title
-      console.log()
-      console.log(returnedBook.volumeInfo)
     });
     bookService
       .getReviews(id)
