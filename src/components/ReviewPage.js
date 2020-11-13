@@ -1,3 +1,14 @@
+// Contributor(s): Esa Mäkipää, Juho Hyödynmaa
+//
+// Esa Mäkipää: 
+//
+//
+// Juho Hyödynmaa:
+// Kirjakortin lataus kirjaid:n perusteella, päivämäärän muodon määrittely
+//
+// Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
+// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
+
 import React, { useState, useEffect } from "react";
 // promiset
 import bookService from "../services/data";
