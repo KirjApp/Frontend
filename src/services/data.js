@@ -5,61 +5,106 @@
 // failure of an asynchronous operation). I have used learnings from 
 // Full stak open 2020 course by University of Helsinki
 //
-// Description: Promises for getting book data and saving book and/or review data.
+// Description: Promises for getting book data, saving book and/or review data.
+// and getting reviews related to selected book.
 // Axios library is used for communication between browser and server
 
 import axios from 'axios'
 
+// kirjatiedot Google Books APIsta (hakusana)
 const baseUrl = 'http://localhost:3001/api/books'
+// kirjatiedot Google Books APIsta (hakusana)
+const oneBookBaseUrl = 'http://localhost:3001/api/book'
+// kirjan ja/tai arvostelujen käsittely (MongoDB)
 const myBaseUrl = 'http://localhost:3001/api/myBooks'
-//const baseUrl = `https://www.googleapis.com/books/v1/volumes`
-//?q=${props.newFilter}t&maxResults=20&projection=full
+// kirjautuneen käyttäjän kirjoittamat arvostelut
+const myReviewsBaseUrl = 'http://localhost:3001/api/userReviews'
+// käyttäjän profiilin luonti
+const createUserBaseUrl = 'http://localhost:3001/api/users'
+// käyttäjän kirjutuminen
+const loginBaseUrl = 'http://localhost:3001/api/login'
 /*
-axios.get('https://www.google.com/search', {
-    params: {
-        q: 'axios'
-    }
-})
+// relatiiviset osoitteet
+const baseUrl = '/api/books'
+const oneBookBaseUrl = '/api/book'
+const myBaseUrl = '/api/myBooks'
+const myReviewsBaseUrl = '/api/userReviews'
+const createUserBaseUrl = '/api/users'
+const loginBaseUrl = '/api/login'
 */
+let token = null
 
-// Getting book data from Google Books API
+// tokenin asettaminen
+const setToken = newToken => {
+  token = `bearer ${newToken}`
+}
+
+// kirjojen haku Google Books APIsta
 const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
         q: `${newFilter}`,
-        maxResults: 20,
+        maxResults: 12,
         projection: 'full'
     }
   })
   return request.then(response => response.data.data.items)
 }
 
-// Saving book and/or review
-const create = newObject => {
-  const request = axios.post(myBaseUrl, newObject)
-  return request.then(response => response.data)
+// yhden kirjan haku tietokannasta kirjan id:n avulla (MongoDB)
+const getOne = id => {
+  const request = axios.get(oneBookBaseUrl + '/' + id, {
+    params: {
+      projection: 'full'
+    }  
+  })
+  return request.then(response => response.data.data)
 }
-/*
-const getAll = newFilter => {
-  //const request = axios.get(`https://www.googleapis.com/books/v1/volumes?q=${props.newFilter}t&maxResults=20&projection=full`)
-  const request = axios.get(baseUrl + `/?query=${newFilter}`)
-  return request.then(response => response.data.data.items)
-}
-*/
-/*
+
+// kirjan ja/tai arvostelujen tallentaminen tietokantaan (MongoDB)
 const create = newObject => {
-  const request = axios.post(baseUrl, newObject)
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.post(myBaseUrl, newObject, config)
   return request.then(response => response.data)
 }
 
-const deleteSelected = id => {
-  const request = axios.delete(baseUrl + '/' + id)
+// kirjan kaikkien arvostelujen haku tietokannasta (MongoDB)
+const getReviews = id => {
+  const request = axios.get(myBaseUrl + '/' + id)
   return request.then(response => response.data)
 }
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
+// kirjan arvostelujen haku tietokannasta kirjautuneelle käyttäjälle (MongoDB)
+const getUserReviews = (loggedUser) => {
+  setToken(loggedUser.token)
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.get(myReviewsBaseUrl, config)
   return request.then(response => response.data)
 }
-*/
-export default { getAll, create /*, create, deleteSelected, update*/ }
+
+// käyttäjän luonti ja tallennus tietokantaan (MongoDB)
+const createUser = async newUserObject => {
+  const response = await axios.post(createUserBaseUrl, newUserObject)
+  return response.data
+}
+
+// käyttäjän kirjautuminen
+const loginUser = async credentials => {
+  const response = await axios.post(loginBaseUrl, credentials)
+  return response.data
+}
+
+export default {
+  getAll,
+  getOne,
+  create,
+  getReviews,
+  getUserReviews,
+  createUser,
+  loginUser,
+  setToken
+}
