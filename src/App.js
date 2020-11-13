@@ -1,4 +1,4 @@
-// Contributor(s): Esa Mäkipää, Taika Tulonen
+// Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
 // Kirjadatan haun perusrunko. Olen hyödyntänyt Full stack open 2020
@@ -7,6 +7,9 @@
 // Taika Tulonen:
 // Alustava käyttöliittymän rakennus Material-UI komponenteilla
 // kirjadatan näyttämiseksi kortteina
+//
+// Juho Hyödynmaa:
+// bugien korjausta
 //
 // Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
 // ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
@@ -189,7 +192,7 @@ const App = () => {
     padding: 5
   };
   
- // Juho Hyödynmaa
+ // Contributor: Juho Hyödynmaa
  // näytetään kirjailijat halutussa muodossa
   const splitAuthors = (authors) => {
     return authors.join(', ')
