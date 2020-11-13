@@ -4,7 +4,7 @@
 //
 //
 // Juho Hyödynmaa:
-// Kirjakortin lataus kirjaid:n perusteella, päivämäärän muodon määrittely
+// Kirjakortin lataus kirjaid:n perusteella, päivämäärän muodon määrittely, kirjailijoiden listaus
 //
 // Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
 // ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
@@ -187,6 +187,7 @@ const ReviewPage = ( props ) => {
     setReviewText(event.target.value)
   }
   
+  // Contributor: Juho Hyödynmaa
   // näytetään kirjailijat halutussa muodossa
   const splitAuthors = (authors) => {
     return authors.join(', ')
