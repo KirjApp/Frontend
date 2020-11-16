@@ -1,13 +1,16 @@
-// Contributor(s): Esa Mäkipää, Juho Hyödynmaa
+// Contributor(s): Esa Mäkipää, Juho Hyödynmaa, Taika Tulonen
 //
-// Esa Mäkipää: 
-//
+// Esa Mäkipää:
+// Näkymän luonnin perusrunko 
 //
 // Juho Hyödynmaa:
 // Kirjakortin lataus kirjaid:n perusteella, päivämäärän muodon määrittely, kirjailijoiden listaus
 //
-// Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
-// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
+// Taika Tulonen:
+// Material-UI komponenttien hyödyntäminen (esim. Grid)
+//
+// Kuvaus: Yksittäisen kirjan näkymä valituilla tiedoilla. Näkymässä voidaan
+// kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liittyvät arvostelut.
 
 import React, { useState, useEffect } from "react";
 // promiset
@@ -22,9 +25,10 @@ import Grid from "@material-ui/core/Grid";
 import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
-// Router
+// Router (useParams)
 import { useParams } from "react-router-dom"
-import {Img} from 'react-image';
+// kirjan kansikuvan näyttäminen
+import { Img } from 'react-image';
 // tekstikenttien näyttäminen
 import FormGroup from '@material-ui/core/FormGroup';
 // painonappi arvostelun lähettämiseen
@@ -37,6 +41,7 @@ import Box from '@material-ui/core/Box';
 import Alert from '@material-ui/lab/Alert';
 // arvostelujen erottamiseen toisistaan
 import Divider from '@material-ui/core/Divider';
+
 // tähtien arvoa vastaavat sanalliset kuvaukset
 const labels = {
   0.5: 'Hyödytön',
@@ -50,6 +55,7 @@ const labels = {
   4.5: 'Erinomainen',
   5: 'Erinomainen+',
 };
+
 const useStyles = makeStyles((theme) => ({
   // kirjakortti (Paper Material-UI -komponentti)
   root: {
@@ -85,7 +91,6 @@ const useStyles = makeStyles((theme) => ({
 const ReviewPage = ( props ) => {
   // kirja id
   const id = useParams().id
-
   // kirjautunut käyttäjä
   const [ user, setUser ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")) || null);
   // nimimerkki
@@ -108,17 +113,20 @@ const ReviewPage = ( props ) => {
   const classes = useStyles();
   
   // Esa Mäkipää, Juho Hyödynmaa
-  // haetaan kirjan arvostelut (parametrina kirjan id)
+  // haetaan kirja (getOne()) ja kirjan arvostelut (getReviews) (parametrina kirjan id)
   useEffect(() => {
     let mounted = true
+    // haetaan kirja Google Books APIsta (Contributor:Juho Hyödynmaa)
     bookService
     .getOne(id)
     .then(returnedBook => {
       if (mounted) {
         setSelectedBook(returnedBook)
       }
+      // asetetaan sivun otsikko
       document.title = "KirjApp: " + returnedBook.volumeInfo.title
     });
+    // haetaan kirjan arvostelut tietokannasta (MongoDB)
     bookService
       .getReviews(id)
       .then(returnedReviews => {
@@ -140,12 +148,13 @@ const ReviewPage = ( props ) => {
       }
   }, [props.books, id, buttonPressed]);
   
-  // Juho Hyödynmaa
+  // Contributor: Juho Hyödynmaa
   // muokataan Date haluttuun muotoon. tulee funktioon muodossa
   // 2020-10-01T12:28:52.033Z (String)
   const modifyDate = (date) => {
       return date.substr(11,5) + " GMT - " + date.substr(8,2) + '.' + date.substr(5,2) + '.' + date.substr(0,4)
   }
+
   // lisää kirja ja/tai arvostelu
   const addBook = (event) => {
     event.preventDefault()
@@ -157,6 +166,7 @@ const ReviewPage = ( props ) => {
       reviewtext: reviewText,
       stars: stars
     }
+
     setWriter("")
     setReviewText("")
     setStars(0)
@@ -171,7 +181,7 @@ const ReviewPage = ( props ) => {
       })
       setMessage("Arvostelusi on tallennettu")
       setMessageType("success")
-      // varmistetaan että arvostelu on tallennettu ennenkö buttonPressed aiheuttaa uuden arvostelujen haun
+      // varmistetaan arvostelun tallentuminen ennen kuin buttonPressed aiheuttaa uuden arvostelujen haun
       setTimeout(() => {
         setButtonPressed(true)
       }, 500)
@@ -182,7 +192,7 @@ const ReviewPage = ( props ) => {
     setWriter(event.target.value)
   }
     
-  // asetetaan arvostelu
+  // asetetaan arvosteluteksti
   const handleReviewChange = (event) => {
     setReviewText(event.target.value)
   }
@@ -193,6 +203,12 @@ const ReviewPage = ( props ) => {
     return authors.join(', ')
   }
  
+  // Contributor: Esa Mäkipää
+  // poistetan tekstistä html-merkinnät (esim. <i>, </p>, &quot;)
+  const cleanText = (textWithHTMLTags) => {
+    return textWithHTMLTags.replace(/(<([^>]+)>)|(&quot;){0,1}/ig, '').trim()
+  }
+
   return (
     <div>
       <br /> 
@@ -201,6 +217,7 @@ const ReviewPage = ( props ) => {
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={0} padding={0}>
                 <Grid item xs={5}>
+
                   <Img  
                     src={!("imageLinks" in Object(selectedBook.volumeInfo)) ? `${NoImage}` : `${selectedBook.volumeInfo.imageLinks.smallThumbnail}`}
                     alt="Book" width="170px" height="250px"
@@ -235,7 +252,7 @@ const ReviewPage = ( props ) => {
                   <Typography variant="caption">
                     {("description" in Object(selectedBook.volumeInfo)) ? 
                       <div>
-                        <TextField id="review" inputProps={{style: {fontSize: 14}}} value={selectedBook.volumeInfo.description} variant="outlined" multiline size="small" rows="8" rowsMax="8" fullWidth label="Kuvaus:"/>
+                        <TextField id="description" inputProps={{style: {fontSize: 14}}} value={cleanText(selectedBook.volumeInfo.description)} variant="outlined" multiline size="small" rows="8" rowsMax="8" fullWidth label="Kuvaus:"/>
                       </div> :
                       <div> 
                       </div>  
@@ -246,6 +263,7 @@ const ReviewPage = ( props ) => {
             </Grid>
           </div>
         </Grid>
+
       <Grid container spacing={0}>
         <div>
           <br />
@@ -253,7 +271,8 @@ const ReviewPage = ( props ) => {
               Kirjoita arvostelu
             </Typography>
         </div>  
-      </Grid>    
+      </Grid>
+
       <Grid container spacing={2}>  
         <div>
           <FormGroup>

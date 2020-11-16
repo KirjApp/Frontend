@@ -1,9 +1,13 @@
-// Contributor(s): Esa Mäkipää
+// Contributor(s): Esa Mäkipää, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Näkymän luonnin perusrunko
 //
+// Juho Hyödynmaa: 
+// Päivämäärän muodon määrittely
+//
+// Kuvaus: Näkymässä näytetään kirjautuneen käyttäjän tiedot (nimimerkki)
+// ja painonappi käyttäjän kirjoittamien arvostelujen näyttämiseen
 
 import React, { useState, useEffect } from "react";
 // promiset
@@ -72,7 +76,7 @@ const UserPage = () => {
     }
   }, [])
 
-  // Juho Hyödynmaa
+  // Contributor: Juho Hyödynmaa
   // muokataan Date haluttuun muotoon, tulee funktioon muodossa
   // 2020-10-01T12:28:52.033Z (String)
   const modifyDate = (date) => {

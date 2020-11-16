@@ -1,15 +1,14 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Kirjadatan haun perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Kirjadatan haun ja näkymän luonnin perusrunko 
 //
 // Taika Tulonen:
 // Alustava käyttöliittymän rakennus Material-UI komponenteilla
 // kirjadatan näyttämiseksi kortteina
 //
 // Juho Hyödynmaa:
-// bugien korjausta
+// Bugien korjausta
 //
 // Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
 // ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
@@ -27,7 +26,7 @@ import UserPage from "./components/UserPage";
 import bookService from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
-// tyyliy
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
 import Grid from "@material-ui/core/Grid";
@@ -54,6 +53,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles((theme) => ({
+  // kirjakortti
   bookCard: {
     height: 250,
     width: 130,
@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0),
     flexWrap: "nowrap",
   },
+  // kirjakorttiin sijoitettava kirjan kansikuva
   media: {
     height: 120,
     width: 130,
@@ -82,25 +83,29 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 130,
     width: "100%",
   },
-  // sovelluksen otsikko
+  // sovelluksen otsikkopalkki
   appHeader: {
     flexGrow: 1,
     width: "70ch"
     //bacgroundColor: "#E5E5E5"
   },
+  // tekstin asettelu kirjakortissa
   typography: {
     fontSize: 10,
   },
+  // Kirjaudu ulos -painonappi
   menuButton: {
     marginRight: theme.spacing(1),
     color: "black"
   },
+  // linkkien (esim. Etusivu, Luo Profiili, Kirjaudu sisään) asettelu
   link: {
     '& > * + *': {
       marginRight: theme.spacing(2),
       textDecoration: "none",
     }, 
   },
+  // sovelluksen nimi otsikkopalkissa
   title: {
     flexGrow: 1,
   },   
@@ -180,14 +185,6 @@ const App = () => {
     )
   };
 
-  // tapahtumankäsittelijä valitulle (klikatulle) kirjalle
-  const handleClickedBook = (book) => {
-    // tallennetaan valittu kirja local storageen
-    window.localStorage.setItem(
-      "selectedBook", JSON.stringify(book)
-    )
-  };
-
   const padding = {
     padding: 5
   };
@@ -198,8 +195,12 @@ const App = () => {
     return authors.join(', ')
   }
 
-  // klikatun kirjan tiedot (välitetään ReviewPage-komponentille)
+  // Contributor: Esa Mäkipää
+  // klikatun kirjakortin (kirjan) tiedot välitetään ReviewPage-komponentille
+  // selvitetään klikatun kirjan id useRouteMatch-hookin avulla
   const match = useRouteMatch("/reviews/:id")
+  // tallennetaan id:tä vastaava kirja muuttujaan book
+  // filteröidään kirja näkymässä olevien kirjojen joukosta 
   const book = match
     ? selectedBooks.filter(book => book.id === match.params.id).map(selectedBook => {return selectedBook})
     : null
@@ -264,7 +265,7 @@ const App = () => {
           </Route>
           <Route path="/reviews/:id">
             <br />
-            <ReviewPage books={book} onClick={handleClickedBook(book)}/>
+            <ReviewPage books={book} />
           </Route>
           <Route path="/">
             <div>

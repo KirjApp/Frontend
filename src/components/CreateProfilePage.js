@@ -1,17 +1,20 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Näkymän luonnin perusrunko
 //
 // Kuvaus: Profiilin luonti sovellukseen. Näkymässä voidaan luoda
 // käyttäjän profiili antamalla nimimerkki ja salasana, jotka tallennetaan
 // tietokantaan
 
 import React, { useState } from "react";
+// promiset
 import bookService from "../services/data";
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
+// grid
 import Grid from "@material-ui/core/Grid";
+// tekstikenttä
 import TextField from '@material-ui/core/TextField';
 // tekstityylit
 import Typography from '@material-ui/core/Typography';
@@ -49,6 +52,7 @@ const CreateProfilePage = () => {
 
   const classes = useStyles();
 
+  // profiilin luonti
   const createProfile = async (event) => {
     event.preventDefault()
 

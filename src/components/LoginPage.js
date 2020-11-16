@@ -1,8 +1,7 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Näkymän luonnin perusrunko
 //
 // Kuvaus: Näkymässä voidaan kirjautua sovellukseen antamalla
 // nimimerkki ja salasana
@@ -43,7 +42,7 @@ const LoginPage = ( props ) => {
   const history = useHistory()
 
   // kirjautunut käyttäjä
-  const [ user, setUser ] = useState(null); 
+  const [ , setUser ] = useState(null); 
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // salasana
@@ -64,6 +63,7 @@ const LoginPage = ( props ) => {
     }
   }, [])
   
+  // kirjautuminen
   const handleLogin = async (event) => {
     event.preventDefault()
     

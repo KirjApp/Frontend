@@ -1,13 +1,12 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Basic code for promises (promise represents the eventual completion or 
-// failure of an asynchronous operation). I have used learnings from 
-// Full stak open 2020 course by University of Helsinki
+// Promisejen peruskoodi (promise edustaa asynkronisen operaation onnistumista tai 
+// epäonnistumista)
 //
-// Description: Promises for getting book data, saving book and/or review data.
-// and getting reviews related to selected book.
-// Axios library is used for communication between browser and server
+// Kuvaus: Promiset kirjadatan hakuun, kirjan ja/tai arvostelun tallentamiseen,
+// kirjaan liittyvien arvostelujen hakuun, käyttäjän luontiin ja käyttäjän kirjautumiseen.
+// Axios-kirjastoa käytetään selaimen ja palvelimen väliseen kommunikointiin
 
 import axios from 'axios'
 
@@ -32,6 +31,7 @@ const myReviewsBaseUrl = '/api/userReviews'
 const createUserBaseUrl = '/api/users'
 const loginBaseUrl = '/api/login'
 */
+
 let token = null
 
 // tokenin asettaminen
