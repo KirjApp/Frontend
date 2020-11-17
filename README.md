@@ -1,9 +1,9 @@
 # Frontend
 
 Frontend project contributors:
-Henri Lahtela
-Esa Mäkipää
-Juho Hyödynmaa
+Henri Lahtela  
+Esa Mäkipää  
+Juho Hyödynmaa  
 Taika Tulonen
 
 Frontend code of KirjApp book review application. Programming environment: React + Material-UI 
