@@ -1,6 +1,6 @@
 # Frontend
 
-Frontend project contributors:
+Frontend project contributors:  
 Henri Lahtela  
 Esa Mäkipää  
 Juho Hyödynmaa  
@@ -24,7 +24,7 @@ The following folders and files are included (may contain folder/files that are 
   - index.css 
   - index.js
   - KirjApp_logo2.svg
-  - noimage.png 
+  - noimage.png
 - .gitignore 
 - README.md 
 - package-lock.json 
