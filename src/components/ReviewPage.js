@@ -19,7 +19,7 @@
 // kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liittyvät arvostelut.
 //
 // Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
-// This material is under Creative Commons BY-NC-SA 4.0-licence. 
+// This material is under Creative Commons BY-NC-SA 4.0-license. 
 
 import React, { useState, useEffect } from "react";
 // promiset
