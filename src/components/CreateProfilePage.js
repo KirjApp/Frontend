@@ -1,11 +1,20 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko
+// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020 -kurssilla
+// (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/ 
 //
 // Kuvaus: Profiilin luonti sovellukseen. Näkymässä voidaan luoda
 // käyttäjän profiili antamalla nimimerkki ja salasana, jotka tallennetaan
 // tietokantaan
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-licence. 
 
 import React, { useState } from "react";
 // promiset

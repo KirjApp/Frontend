@@ -1,7 +1,13 @@
 // Contributor(s): Esa Mäkipää, Juho Hyödynmaa, Taika Tulonen
 //
 // Esa Mäkipää:
-// Näkymän luonnin perusrunko 
+// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020 -kurssilla
+// (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/ 
 //
 // Juho Hyödynmaa:
 // Kirjakortin lataus kirjaid:n perusteella, päivämäärän muodon määrittely, kirjailijoiden listaus
@@ -11,6 +17,9 @@
 //
 // Kuvaus: Yksittäisen kirjan näkymä valituilla tiedoilla. Näkymässä voidaan
 // kirjoittaa ja lähettää arvostelu sekä näyttää kirjaan liittyvät arvostelut.
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-licence. 
 
 import React, { useState, useEffect } from "react";
 // promiset
@@ -92,7 +101,7 @@ const ReviewPage = ( props ) => {
   // kirja id
   const id = useParams().id
   // kirjautunut käyttäjä
-  const [ user, setUser ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")) || null);
+  const [ user, ] = useState(JSON.parse(window.localStorage.getItem("loggedUser")) || null);
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // arvosteluteksti

@@ -2,11 +2,19 @@
 //
 // Esa Mäkipää: 
 // Promisejen peruskoodi (promise edustaa asynkronisen operaation onnistumista tai 
-// epäonnistumista)
+// epäonnistumista). Olen hyödyntänyt Full stack open 2020 -kurssin (Helsingin yliopisto) materiaalia
+// Lähde: 
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
 //
 // Kuvaus: Promiset kirjadatan hakuun, kirjan ja/tai arvostelun tallentamiseen,
 // kirjaan liittyvien arvostelujen hakuun, käyttäjän luontiin ja käyttäjän kirjautumiseen.
 // Axios-kirjastoa käytetään selaimen ja palvelimen väliseen kommunikointiin
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-licence.
 
 import axios from 'axios'
 

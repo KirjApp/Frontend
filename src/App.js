@@ -1,7 +1,13 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Kirjadatan haun ja näkymän luonnin perusrunko 
+// Kirjadatan haun ja näkymän luonnin perusrunko. Olen hyödyntänyt 
+// Full stack open 2020 -kurssilla (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/ 
 //
 // Taika Tulonen:
 // Alustava käyttöliittymän rakennus Material-UI komponenteilla
@@ -11,7 +17,10 @@
 // Bugien korjausta
 //
 // Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
-// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
+// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-licence. 
 
 import React, { useState, useEffect } from "react";
 // yksittäisen kirjan sivu
@@ -274,7 +283,7 @@ const App = () => {
                 <div>
                   <br />
                   <form className={classes.filterTextField} noValidate autoComplete="off">
-                    <TextField id="searchText" type="search" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
+                    <TextField id="searchText" type="search" label="Hae kirjoja kirjan nimellä" variant="outlined" size="small" onChange={handleFilterChange} />
                   </form>
                 </div>
               </Grid>
