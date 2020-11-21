@@ -8,6 +8,8 @@ Taika Tulonen
 
 Frontend code of KirjApp book review application. Programming environment: React + Material-UI 
 
+The material is under the Creative Commons BY-NC-SA 4.0-license. https://creativecommons.org/licenses/by-nc-sa/4.0/
+
 The following folders and files are included (may contain folder/files that are not necessary): 
 
 - public (folder) 
