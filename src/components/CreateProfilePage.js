@@ -18,7 +18,7 @@
 
 import React, { useState } from "react";
 // promiset
-import bookService from "../services/data";
+import { createUser } from "../services/data";
 // tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
@@ -74,8 +74,7 @@ const CreateProfilePage = () => {
     setWriter('')
     setPassword('')
     // luodaan ja tallennetaan käyttäjä
-    const newUser = await bookService
-      .createUser(newUserObject)  
+    const newUser = await createUser(newUserObject)  
       .catch (error =>  {
         setMessageType("error")
         setMessage(error.response.data.error)

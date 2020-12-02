@@ -20,7 +20,7 @@
 
 import React, { useState, useEffect } from "react";
 // promiset
-import bookService from "../services/data";
+import { getUserReviews, setToken } from "../services/data";
 // tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
@@ -81,7 +81,7 @@ const UserPage = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setWriter(user)
-      bookService.setToken(user.token)
+      setToken(user.token)
     }
   }, [])
 
@@ -98,8 +98,7 @@ const UserPage = () => {
   const handleShowUserReviews = async (event) => {
     //event.preventDefault()
     setUserReviewsShown(true)
-    const userReviews = await bookService
-      .getUserReviews(writer)
+    const userReviews = await getUserReviews(writer)
 
     userReviews.forEach(review => {
       review.date = modifyDate(review.date)

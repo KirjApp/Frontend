@@ -23,7 +23,7 @@
 
 import React, { useState, useEffect } from "react";
 // promiset
-import bookService from "../services/data";
+import { getOne, create, getReviews } from "../services/data";
 // KirjApp-logo esim. tulostumaan tyhjä kansikuvan tilalle
 import NoImage from "../KirjApp_logo2.svg";
 // tyylit
@@ -126,8 +126,7 @@ const ReviewPage = ( props ) => {
   useEffect(() => {
     let mounted = true
     // haetaan kirja Google Books APIsta (Contributor:Juho Hyödynmaa)
-    bookService
-    .getOne(id)
+    getOne(id)
     .then(returnedBook => {
       if (mounted) {
         setSelectedBook(returnedBook)
@@ -136,8 +135,7 @@ const ReviewPage = ( props ) => {
       document.title = "KirjApp: " + returnedBook.volumeInfo.title
     });
     // haetaan kirjan arvostelut tietokannasta (MongoDB)
-    bookService
-      .getReviews(id)
+    getReviews(id)
       .then(returnedReviews => {
         if (mounted) {
           if (returnedReviews) { 
@@ -181,8 +179,7 @@ const ReviewPage = ( props ) => {
     setStars(0)
       
     // lisää kirjan ja arvostelun tiedot (book object)
-    bookService
-      .create(bookObject)
+    create(bookObject)
       .catch(error => {
         console.log(error)
         setMessage("Arvostelusi tallentamisessa tapahtui virhe")

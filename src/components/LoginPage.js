@@ -17,7 +17,7 @@
 
 import React, { useState, useEffect } from "react";
 // promiset
-import bookService from "../services/data";
+import { loginUser, setToken} from "../services/data";
 // tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
@@ -68,7 +68,7 @@ const LoginPage = ( props ) => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      bookService.setToken(user.token)
+      setToken(user.token)
     }
   }, [])
   
@@ -85,8 +85,7 @@ const LoginPage = ( props ) => {
     setWriter("")
     setPassword("")
     // kirjautuminen
-    const loggedUser = await bookService
-      .loginUser(userObject)
+    const loggedUser = await loginUser(userObject)
       .catch (error =>  {
         setMessageType("error")
         setMessage(error.response.data.error)
@@ -99,7 +98,7 @@ const LoginPage = ( props ) => {
         "loggedUser", JSON.stringify(loggedUser)
       )
       // asetetaan token kirjautuneelle käyttäjälle
-      bookService.setToken(loggedUser.token)
+      setToken(loggedUser.token)
       await setUser(loggedUser)
       // palautetaan tieto kirjutuneesta etusivulle
       props.onLoggedUser(loggedUser)

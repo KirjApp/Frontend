@@ -32,7 +32,7 @@ import LoginPage from "./components/LoginPage";
 // kirjautuneen käyttäjän tiedot
 import UserPage from "./components/UserPage";
 // promiset
-import bookService from "./services/data";
+import { getAll, setToken } from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
 // tyylit
@@ -138,7 +138,7 @@ const App = () => {
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
       setLoggedUser(loggedUser)
-      bookService.setToken(loggedUser.token)
+      setToken(loggedUser.token)
     }   
   }, [])
 
@@ -147,7 +147,7 @@ const App = () => {
     document.title = "KirjApp"
     let mounted = true
     if (newFilter.trim() !== "" && newFilter.trim().length > 0) {
-      bookService.getAll(newFilter).then((books) => {
+      getAll(newFilter).then((books) => {
         if (mounted) {
           // asetetaan valitut kirjat
           setSelectedBooks(books);
@@ -179,7 +179,7 @@ const App = () => {
   // tapahtumankäsittelijä uloskirjautumiselle
   const handleUserLogout = (event) => {
     setLoggedUser(null)
-    bookService.setToken(null)
+    setToken(null)
     // poistetaan kirjautuneen käyttäjän tieodt local stragesta
     //window.localStorage.removeItem("loggedUser")
     // poistetaan kaikki tallennettu tieto local storagesta 
