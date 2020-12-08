@@ -15,7 +15,7 @@
   - Cypress window opens, start the test by clicking kirjapp.spec.js
   - the browser opens and it shows how the application behaves during the test run
 - OR runt tests from command line with the command: __npm run test:e2e__
-  - Note! Test run saves a vidoe into the folder cypress/videos/
+  - Note! Test run saves a video into the folder cypress/videos/
 
 Frontend project contributors:  
 Henri Lahtela  
