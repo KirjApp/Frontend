@@ -1,13 +1,26 @@
-// Contributor(s): Esa Mäkipää
+// Contributor(s): Esa Mäkipää, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020 -kurssilla
+// (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
 //
+// Juho Hyödynmaa: 
+// Päivämäärän muodon määrittely
+//
+// Kuvaus: Näkymässä näytetään kirjautuneen käyttäjän tiedot (nimimerkki)
+// ja painonappi käyttäjän kirjoittamien arvostelujen näyttämiseen
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-license. 
 
 import React, { useState, useEffect } from "react";
 // promiset
-import bookService from "../services/data";
+import { getUserReviews, setToken } from "../services/data";
 // tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
@@ -68,11 +81,11 @@ const UserPage = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setWriter(user)
-      bookService.setToken(user.token)
+      setToken(user.token)
     }
   }, [])
 
-  // Juho Hyödynmaa
+  // Contributor: Juho Hyödynmaa
   // muokataan Date haluttuun muotoon, tulee funktioon muodossa
   // 2020-10-01T12:28:52.033Z (String)
   const modifyDate = (date) => {
@@ -85,8 +98,7 @@ const UserPage = () => {
   const handleShowUserReviews = async (event) => {
     //event.preventDefault()
     setUserReviewsShown(true)
-    const userReviews = await bookService
-      .getUserReviews(writer)
+    const userReviews = await getUserReviews(writer)
 
     userReviews.forEach(review => {
       review.date = modifyDate(review.date)

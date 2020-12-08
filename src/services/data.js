@@ -1,13 +1,20 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Basic code for promises (promise represents the eventual completion or 
-// failure of an asynchronous operation). I have used learnings from 
-// Full stak open 2020 course by University of Helsinki
+// Promisejen peruskoodi (promise edustaa asynkronisen operaation onnistumista tai 
+// epäonnistumista). Olen hyödyntänyt Full stack open 2020 -kurssin (Helsingin yliopisto) materiaalia
+// Lähde: 
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
 //
-// Description: Promises for getting book data, saving book and/or review data.
-// and getting reviews related to selected book.
-// Axios library is used for communication between browser and server
+// Kuvaus: Promiset kirjadatan hakuun, kirjan ja/tai arvostelun tallentamiseen,
+// kirjaan liittyvien arvostelujen hakuun, käyttäjän luontiin ja käyttäjän kirjautumiseen.
+// Axios-kirjastoa käytetään selaimen ja palvelimen väliseen kommunikointiin
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-license.
 
 import axios from 'axios'
 
@@ -32,15 +39,16 @@ const myReviewsBaseUrl = '/api/userReviews'
 const createUserBaseUrl = '/api/users'
 const loginBaseUrl = '/api/login'
 */
+
 let token = null
 
 // tokenin asettaminen
-const setToken = newToken => {
+export const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
 // kirjojen haku Google Books APIsta
-const getAll = newFilter => {
+export const getAll = newFilter => {
   const request = axios.get(baseUrl, {
     params: {
         q: `${newFilter}`,
@@ -52,7 +60,7 @@ const getAll = newFilter => {
 }
 
 // yhden kirjan haku tietokannasta kirjan id:n avulla (MongoDB)
-const getOne = id => {
+export const getOne = id => {
   const request = axios.get(oneBookBaseUrl + '/' + id, {
     params: {
       projection: 'full'
@@ -62,7 +70,7 @@ const getOne = id => {
 }
 
 // kirjan ja/tai arvostelujen tallentaminen tietokantaan (MongoDB)
-const create = newObject => {
+export const create = newObject => {
   const config = {
     headers: { Authorization: token },
   }
@@ -71,13 +79,13 @@ const create = newObject => {
 }
 
 // kirjan kaikkien arvostelujen haku tietokannasta (MongoDB)
-const getReviews = id => {
+export const getReviews = id => {
   const request = axios.get(myBaseUrl + '/' + id)
   return request.then(response => response.data)
 }
 
 // kirjan arvostelujen haku tietokannasta kirjautuneelle käyttäjälle (MongoDB)
-const getUserReviews = (loggedUser) => {
+export const getUserReviews = (loggedUser) => {
   setToken(loggedUser.token)
   const config = {
     headers: { Authorization: token },
@@ -87,24 +95,13 @@ const getUserReviews = (loggedUser) => {
 }
 
 // käyttäjän luonti ja tallennus tietokantaan (MongoDB)
-const createUser = async newUserObject => {
+export const createUser = async newUserObject => {
   const response = await axios.post(createUserBaseUrl, newUserObject)
   return response.data
 }
 
 // käyttäjän kirjautuminen
-const loginUser = async credentials => {
+export const loginUser = async credentials => {
   const response = await axios.post(loginBaseUrl, credentials)
   return response.data
-}
-
-export default {
-  getAll,
-  getOne,
-  create,
-  getReviews,
-  getUserReviews,
-  createUser,
-  loginUser,
-  setToken
 }

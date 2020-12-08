@@ -1,15 +1,23 @@
 // Contributor(s): Esa Mäkipää
 //
 // Esa Mäkipää: 
-// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Näkymän luonnin perusrunko. Olen hyödyntänyt Full stack open 2020 -kurssilla
+// (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/
 //
 // Kuvaus: Näkymässä voidaan kirjautua sovellukseen antamalla
 // nimimerkki ja salasana
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-license. 
 
 import React, { useState, useEffect } from "react";
 // promiset
-import bookService from "../services/data";
+import { loginUser, setToken} from "../services/data";
 // tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
@@ -43,7 +51,7 @@ const LoginPage = ( props ) => {
   const history = useHistory()
 
   // kirjautunut käyttäjä
-  const [ user, setUser ] = useState(null); 
+  const [ , setUser ] = useState(null); 
   // nimimerkki
   const [ writer, setWriter ] = useState("");
   // salasana
@@ -60,10 +68,11 @@ const LoginPage = ( props ) => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      bookService.setToken(user.token)
+      setToken(user.token)
     }
   }, [])
   
+  // kirjautuminen
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -76,8 +85,7 @@ const LoginPage = ( props ) => {
     setWriter("")
     setPassword("")
     // kirjautuminen
-    const loggedUser = await bookService
-      .loginUser(userObject)
+    const loggedUser = await loginUser(userObject)
       .catch (error =>  {
         setMessageType("error")
         setMessage(error.response.data.error)
@@ -90,7 +98,7 @@ const LoginPage = ( props ) => {
         "loggedUser", JSON.stringify(loggedUser)
       )
       // asetetaan token kirjautuneelle käyttäjälle
-      bookService.setToken(loggedUser.token)
+      setToken(loggedUser.token)
       await setUser(loggedUser)
       // palautetaan tieto kirjutuneesta etusivulle
       props.onLoggedUser(loggedUser)

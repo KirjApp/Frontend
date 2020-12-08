@@ -1,18 +1,26 @@
 // Contributor(s): Esa Mäkipää, Taika Tulonen, Juho Hyödynmaa
 //
 // Esa Mäkipää: 
-// Kirjadatan haun perusrunko. Olen hyödyntänyt Full stack open 2020
-// 2020 -kurssilla (Helsingin yliopisto) oppimaani
+// Kirjadatan haun ja näkymän luonnin perusrunko. Olen hyödyntänyt 
+// Full stack open 2020 -kurssilla (Helsingin yliopisto) oppimiani asioita
+// Lähde:
+// Full stack open 2020 (https://fullstackopen.com/),
+// Syväsukellus moderniin websovelluskehitykseen (osat 0-8),
+// kurssimateriaali on lisensoitu Creative Commons BY-NC-SA 3.0 -lisenssillä
+// https://creativecommons.org/licenses/by-nc-sa/3.0/ 
 //
 // Taika Tulonen:
 // Alustava käyttöliittymän rakennus Material-UI komponenteilla
 // kirjadatan näyttämiseksi kortteina
 //
 // Juho Hyödynmaa:
-// bugien korjausta
+// Bugien korjausta
 //
 // Kuvaus: Sovelluksen pääsivu. Luo käyttöliittymän hakusanan kirjoittamiselle 
-// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa 
+// ja hakutulosten näyttämiselle. Sovellus hakee kirjoja hakusanaa kirjoitettaessa
+//
+// Materiaali on Creative Commons BY-NC-SA 4.0-lisenssin alaista.
+// This material is under Creative Commons BY-NC-SA 4.0-license. 
 
 import React, { useState, useEffect } from "react";
 // yksittäisen kirjan sivu
@@ -24,10 +32,10 @@ import LoginPage from "./components/LoginPage";
 // kirjautuneen käyttäjän tiedot
 import UserPage from "./components/UserPage";
 // promiset
-import bookService from "./services/data";
+import { getAll, setToken } from "./services/data";
 // tyhjä kuva (, jos kirjatiedoissa ei ole kansikuvaa)
 import NoImage from "./noImage.png";
-// tyyliy
+// tyylit
 import { makeStyles } from "@material-ui/core/styles";
 // grid
 import Grid from "@material-ui/core/Grid";
@@ -54,6 +62,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles((theme) => ({
+  // kirjakortti
   bookCard: {
     height: 250,
     width: 130,
@@ -61,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0),
     flexWrap: "nowrap",
   },
+  // kirjakorttiin sijoitettava kirjan kansikuva
   media: {
     height: 120,
     width: 130,
@@ -82,25 +92,29 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 130,
     width: "100%",
   },
-  // sovelluksen otsikko
+  // sovelluksen otsikkopalkki
   appHeader: {
     flexGrow: 1,
     width: "70ch"
     //bacgroundColor: "#E5E5E5"
   },
+  // tekstin asettelu kirjakortissa
   typography: {
     fontSize: 10,
   },
+  // Kirjaudu ulos -painonappi
   menuButton: {
     marginRight: theme.spacing(1),
     color: "black"
   },
+  // linkkien (esim. Etusivu, Luo Profiili, Kirjaudu sisään) asettelu
   link: {
     '& > * + *': {
       marginRight: theme.spacing(2),
       textDecoration: "none",
     }, 
   },
+  // sovelluksen nimi otsikkopalkissa
   title: {
     flexGrow: 1,
   },   
@@ -124,7 +138,7 @@ const App = () => {
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
       setLoggedUser(loggedUser)
-      bookService.setToken(loggedUser.token)
+      setToken(loggedUser.token)
     }   
   }, [])
 
@@ -133,7 +147,7 @@ const App = () => {
     document.title = "KirjApp"
     let mounted = true
     if (newFilter.trim() !== "" && newFilter.trim().length > 0) {
-      bookService.getAll(newFilter).then((books) => {
+      getAll(newFilter).then((books) => {
         if (mounted) {
           // asetetaan valitut kirjat
           setSelectedBooks(books);
@@ -165,7 +179,7 @@ const App = () => {
   // tapahtumankäsittelijä uloskirjautumiselle
   const handleUserLogout = (event) => {
     setLoggedUser(null)
-    bookService.setToken(null)
+    setToken(null)
     // poistetaan kirjautuneen käyttäjän tieodt local stragesta
     //window.localStorage.removeItem("loggedUser")
     // poistetaan kaikki tallennettu tieto local storagesta 
@@ -180,14 +194,6 @@ const App = () => {
     )
   };
 
-  // tapahtumankäsittelijä valitulle (klikatulle) kirjalle
-  const handleClickedBook = (book) => {
-    // tallennetaan valittu kirja local storageen
-    window.localStorage.setItem(
-      "selectedBook", JSON.stringify(book)
-    )
-  };
-
   const padding = {
     padding: 5
   };
@@ -198,8 +204,12 @@ const App = () => {
     return authors.join(', ')
   }
 
-  // klikatun kirjan tiedot (välitetään ReviewPage-komponentille)
+  // Contributor: Esa Mäkipää
+  // klikatun kirjakortin (kirjan) tiedot välitetään ReviewPage-komponentille
+  // selvitetään klikatun kirjan id useRouteMatch-hookin avulla
   const match = useRouteMatch("/reviews/:id")
+  // tallennetaan id:tä vastaava kirja muuttujaan book
+  // filteröidään kirja näkymässä olevien kirjojen joukosta 
   const book = match
     ? selectedBooks.filter(book => book.id === match.params.id).map(selectedBook => {return selectedBook})
     : null
@@ -264,7 +274,7 @@ const App = () => {
           </Route>
           <Route path="/reviews/:id">
             <br />
-            <ReviewPage books={book} onClick={handleClickedBook(book)}/>
+            <ReviewPage books={book} />
           </Route>
           <Route path="/">
             <div>
@@ -273,7 +283,7 @@ const App = () => {
                 <div>
                   <br />
                   <form className={classes.filterTextField} noValidate autoComplete="off">
-                    <TextField id="searchText" type="search" label="Hae kirjoja" variant="outlined" size="small" onChange={handleFilterChange} />
+                    <TextField id="searchText" type="search" label="Kirjoita hakusana (kirjan nimi, kirjoittaja,...)" variant="outlined" size="small" onChange={handleFilterChange} />
                   </form>
                 </div>
               </Grid>
